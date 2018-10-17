@@ -13,14 +13,10 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 module.exports = (knex) => {
 
-  router.get("/", (req, res) => {
-    knex
-      .select("*")
-      .from("users")
-      .then((results) => {
-        res.json(results);
-    });
-  });
+
+  // router.get("/", (req, res) => {
+  //
+  // });
 
   // Endpoint for getting the create-new-poll page
   router.get("/new", (req, res) => {
