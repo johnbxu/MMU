@@ -1,7 +1,15 @@
 "use strict";
 
+// Importing packages
 const express = require('express');
 const router  = express.Router();
+const app = express();
+const bodyParser = require('body-parser');
+
+// Using packages
+app.set('view engine', 'ejs');
+app.use(bodyParser.urlencoded({extended: true}));
+
 
 module.exports = (knex) => {
 
