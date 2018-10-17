@@ -36,11 +36,16 @@ app.use("/styles", sass({
 app.use(express.static("public"));
 
 // Mount all resource routes
-app.use("/api/users", usersRoutes(knex));
+app.use("/polls", pollsRoutes(knex));
 
 // Home page
 app.get("/", (req, res) => {
   res.render("index");
+});
+
+// Endpoint for error page
+router.get("/error", (req, res) => {
+  res.render("error");
 });
 
 app.listen(PORT, () => {
