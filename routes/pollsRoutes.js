@@ -36,7 +36,17 @@ module.exports = (knex) => {
 
   // Endpoint for getting the voting page
   router.get("/:id", (req, res) => {
-    res.redirect("../views/vote.ejs");
+    let variables;
+    knex
+      .select('*')
+      .from('poll')
+      .where('randomURL', req.params.id)
+      .then(function(response) {
+        variables = response[0];
+        console.log(variables);
+        res.render("../views/vote.ejs", variables);
+
+      });
   });
 
   // Endpoint for submitting the vote. Redir to /polls/:id/votes on success
