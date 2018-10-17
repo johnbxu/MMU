@@ -101,7 +101,38 @@ module.exports = (knex) => {
 
   // Endpoint for submitting the vote. Redir to /polls/:id/votes on success
   router.post("/:id", (req, res) => {
-
+    knex
+      .select('*')
+      .from('poll')
+      .join('response')
+      .where('poll.randomURL', req.params.id)
+      .then(function(response) {
+        variables.poll = response[0];
+        pollId = variables.poll.id;
+      }).then(function() {
+        knex
+          .select('*')
+          .from('response')
+          .where('poll_id', pollId)
+          .then(function(response) {
+            variables.responses = response;
+            knex
+              .select('*')
+              .from('votes')
+              .where('response_id', variables.responses.id)
+              .then(function(response) {
+                variables.votes = response;
+                for (const vote of variables.votes) {
+                  for (const response of variables.responses) {
+                    if (response.id === vote.response_id) {
+                      response.borda += vote.bordaValue;
+                    }
+                  }
+                })
+              });
+            });
+          console.log(variables);
+        })
     res.redirect("/:id/votes")
   });
 
