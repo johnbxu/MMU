@@ -29,7 +29,7 @@ module.exports = (knex) => {
   });
 
   // Endpoint for creating a poll. Redir to polls/:id/admin if success
-  router.post("/", (req, res) => {
+  router.post("/new", (req, res) => {
 
     res.redirect("/:id/admin");
   });
