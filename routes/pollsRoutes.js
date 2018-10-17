@@ -27,8 +27,28 @@ module.exports = (knex) => {
   });
 
   // Endpoint for admin access of poll
+  // uses the unique URL to find the correct poll
   router.get("/:id/admin", (req, res) => {
-    res.render("../views/admin.ejs");
+    let templateVars = {};
+    let pollID;
+
+    knex.select('*').from('poll').where('randomURL', req.params.id).then(result => {
+      templateVars.poll = result[0];
+      pollID = templateVars.poll['id'];
+
+      // once the correct poll is identified it is passed into the variables object
+      // the pollID variable is used to find the appropriate options for this poll
+    }).then(function() {
+      return knex.select('*').from('response').where('poll_id', pollID).then(options2 => {
+        templateVars.options = options2;
+
+        // the options for this poll are added to the variables object
+      }).then(function() {
+
+        // ejs uses the variables to render the page
+        res.render("../views/admin.ejs", templateVars);
+      })
+    })
   });
 
   // Endpoint for creating a poll. Redir to polls/:id/admin if success
@@ -44,7 +64,7 @@ module.exports = (knex) => {
                     end_date: req.body.end };
 
     // by default this router expects to receive all the options
-    // in a JSON stringify string
+    // in a JSON.stringify string
     let receivedOptions = JSON.parse(req.body.options);
 
     // next we insert the new question as a new instance of the poll table
