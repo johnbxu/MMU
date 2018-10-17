@@ -112,7 +112,6 @@ module.exports = (knex) => {
     knex
       .select('*')
       .from('poll')
-      .join('response')
       .where('poll.randomURL', req.params.id)
       .then(function(response) {
         variables.poll = response[0];
@@ -124,8 +123,8 @@ module.exports = (knex) => {
           .where('poll_id', pollId)
           .then(function(response) {
             variables.responses = response[0];
+            console.log(variables);
           });
-          console.log(variables);
         });
     res.render("../views/vote_finished.ejs");
   });
