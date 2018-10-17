@@ -65,15 +65,15 @@ module.exports = (knex) => {
   });
 
   // Endpoint for getting the voting page
+  // Queries DB for randomURL and outputs data associated with the row
   router.get("/:id", (req, res) => {
-    let variables;
+    let variables = {};
     knex
       .select('*')
       .from('poll')
       .where('randomURL', req.params.id)
       .then(function(response) {
-        variables = response[0];
-        console.log(variables);
+        variables.poll = response[0];
         res.render("../views/vote.ejs", variables);
 
       });
@@ -87,8 +87,27 @@ module.exports = (knex) => {
 
   // Endpoint for displaying the current votes status
   router.get("/:id/votes", (req, res) => {
+    let variables = {};
+    let pollId;
+    knex
+      .select('*')
+      .from('poll')
+      .join('response')
+      .where('poll.randomURL', req.params.id)
+      .then(function(response) {
+        variables.poll = response[0];
+        pollId = variables.poll.id;
+      }).then(function() {
+        knex
+          .select('*')
+          .from('response')
+          .where('poll_id', pollId)
+          .then(function(response) {
+            variables.responses = response[0];
+          });
+          console.log(variables);
+        });
     res.render("../views/vote_finished.ejs");
-
   });
 
 
