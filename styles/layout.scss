@@ -14,5 +14,9 @@ body {
   .options {
     display: flex;
     flex-direction: column;
+  .sortableContainer {
+    height: 20rem;
+    width: 40rem;
+    background-color: rgb(46, 132, 201);
   }
 }

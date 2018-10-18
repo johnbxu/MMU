@@ -53,7 +53,7 @@ module.exports = (knex) => {
     // creates an object that knex can insert
     // the keys are the column names in the poll table
     console.log("reqbody",req.body);
-    
+
     let receivedData = req.body;
 
     console.log("receivedData", receivedData)
@@ -122,44 +122,80 @@ module.exports = (knex) => {
   // Logic is: find poll using randomURL; find responses using poll_id; find votes using
   //  response_id; loop through votes and responses and if reponse_id === id, increment
   router.put("/:id", (req, res) => {
-
+    const options = req.body.obj;
+    const borda = {};
+    console.log(options);
+    for (let i = 0; i < options.length; i++) {
+      knex('response')
+        .where('id', options[i])
+        .update({
+          borda: options.length - i
+        })
+        .then(function() {
+          console.log('updated borda')
+        });
+      // borda[options[i]] = options.length - i;
+    };
+    // console.log(borda);
+    // knex('poll')
+    //   .join('response', 'poll.id','=', 'response.poll_id')
+    //   .where('poll.randomURL', req.params.id)
+    //   .update({
+    //
+    //   })
+    //   .then(function(table) {
+    //     console.log(table);
+    //     templateVars.responses = table;
+    //     res.render("../views/vote_finished.ejs", templateVars);
+    //   });
+    computeBorda();
   });
 
-  // Submit email address to soft-login and assign cookie
-  router.put("/:id/votes", (req, res) => {
-    // req.session.email = receivedData.email;
-    // add cookie
-    res.redirect(`/${req.params.id}/votes`);
-  });
 
   // Endpoint for displaying the current votes status
   router.get("/:id/votes", (req, res) => {
     let templateVars = {};
     let pollId;
 
+    knex('poll')
+      .join('response', 'poll.id','=', 'response.poll_id')
+      .select('*')
+      .where('poll.randomURL', req.params.id)
+      .then(function(table) {
+        console.log(table);
+        templateVars.responses = table;
+        res.render("../views/vote_finished.ejs", templateVars);
+      });
     // once the correct poll is identified it is passed into the variables object
     // the pollID variable is used to find the appropriate options for this poll
-    knex
-      .select('*')
-      .from('poll')
-      .where('poll.randomURL', req.params.id)
-      .then(function(response) {
-        templateVars.poll = response[0];
-        pollId = templateVars.poll.id;
-      }).then(function() {
-        // the options for this poll are added to the variables object
-        knex
-          .select('*')
-          .from('response')
-          .where('poll_id', pollId)
-          .then(function(options) {
-            templateVars.options = options;
-            console.log(templateVars);
-            console.log(options);
-            // ejs uses the variables to render the page
-            res.render("../views/vote_finished.ejs", templateVars);
-          });
-      });
+    // knex
+    //   .select('*')
+    //   .from('poll')
+    //   .where('poll.randomURL', req.params.id)
+    //   .then(function(response) {
+    //     templateVars.poll = response[0];
+    //     pollId = templateVars.poll.id;
+    //   }).then(function() {
+    //     // the options for this poll are added to the variables object
+    //     knex
+    //       .select('*')
+    //       .from('response')
+    //       .where('poll_id', pollId)
+    //       .then(function(options) {
+    //         templateVars.options = options;
+    //         console.log(templateVars);
+    //         console.log(options);
+    //         // ejs uses the variables to render the page
+    //         res.render("../views/vote_finished.ejs", templateVars);
+    //       });
+    //   });
+  });
+
+  // Submit email address to soft-login and assign cookie
+  router.put("/:id/votes", (req, res) => {
+    // req.session.email = req.body.email;
+    // add cookie
+    res.redirect(`/${req.params.id}/votes`);
   });
 
   // Searches for a poll based on randomURL and if owner, searches for specific
