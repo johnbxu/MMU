@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <title>Error Page</title>
     <% include ./partials/_head.ejs %>
   </head>
   <header>
@@ -8,9 +9,11 @@
   </header>
 
   <body>
-    <h2>We're sorry!</h2>
-    <h3>There was an error. Here's what happened:</h3>
-    <span>Error Code: <%= errorCode %></span><br>
-    <span>Error Message: <%= errorMessage %></span>
+    <div class="jumbotron" style="margin: 5%; text-align: center">
+      <h2>We're sorry!</h2>
+      <h3>There was an error. Here's what happened:</h3>
+      <span>Error Code: <%= errorCode %></span><br>
+      <span>Error Message: <%= errorMessage %></span>
+    </div>
   </body>
 </html>
