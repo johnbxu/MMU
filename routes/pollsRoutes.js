@@ -3,18 +3,18 @@
 // Importing packages
 const express = require('express');
 const router  = express.Router();
-const app = express();
-const bodyParser = require('body-parser');
-const cookieSession = require('cookie-session');
+// const app = express();
+// const bodyParser = require('body-parser');
+// const cookieSession = require('cookie-session');
 
 // Using packages
-app.set('view engine', 'ejs');
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookieSession({
-  name: 'session',
-  keys: ['keydonut', 'keyeclair'],
-  maxAge: 24 * 60 * 60 * 1000 // 24 hours
-}));
+// app.set('view engine', 'ejs');
+// app.use(bodyParser.urlencoded({extended: true}));
+// app.use(cookieSession({
+//   name: 'session',
+//   keys: ['keydonut', 'keyeclair'],
+//   maxAge: 24 * 60 * 60 * 1000 // 24 hours
+// }));
 
 // base 36 to include all 26 letters and 10 numbers
 // returns a numberOfChars long string starting at index 2
@@ -26,6 +26,8 @@ module.exports = (knex) => {
 
   // Endpoint for getting the create-new-poll page
   router.get("/new", (req, res) => {
+    req.session.email = 'sdgdfgfd';
+
     res.render("../views/new_poll.ejs");
   });
 
@@ -66,6 +68,7 @@ module.exports = (knex) => {
   // Endpoint for creating a poll. Redir to polls/:id/admin if success
   // where :id is a randomly generated 8 char long string
   router.post("/new", (req, res) => {
+    console.log(req);
     // creates an object that knex can insert
     // the keys are the column names in the poll table
     let uniqueURL = generateRandomString(8);
@@ -94,7 +97,7 @@ module.exports = (knex) => {
     }).then((result) => {
 
       knex.table('response').insert(result).then(function(){
-        console.log(req.session);
+
         req.session.email = req.body.email;
         res.redirect(`../polls/${uniqueURL}/admin`);
     })
@@ -134,7 +137,7 @@ module.exports = (knex) => {
             variables.responses = response[0];
             console.log(variables);
           });
-        }).then(function)
+        })
     res.redirect("/:id/votes")
   });
 
