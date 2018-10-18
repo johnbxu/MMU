@@ -119,15 +119,32 @@ module.exports = (knex) => {
   // Logic is: find poll using randomURL; find responses using poll_id; find votes using
   //  response_id; loop through votes and responses and if reponse_id === id, increment
   router.put("/:id", (req, res) => {
-    knex('poll')
-      .join('response', 'poll.id','=', 'response.poll_id')
-      .select('*')
-      .where('poll.randomURL', req.params.id)
-      .then(function(table) {
-        console.log(table);
-        templateVars.responses = table;
-        res.render("../views/vote_finished.ejs", templateVars);
-      });
+    const options = req.body.obj;
+    const borda = {};
+    console.log(options);
+    for (let i = 0; i < options.length; i++) {
+      knex('response')
+        .where('id', options[i])
+        .update({
+          borda: options.length - i
+        })
+        .then(function() {
+          console.log('updated borda')
+        });
+      // borda[options[i]] = options.length - i;
+    };
+    // console.log(borda);
+    // knex('poll')
+    //   .join('response', 'poll.id','=', 'response.poll_id')
+    //   .where('poll.randomURL', req.params.id)
+    //   .update({
+    //
+    //   })
+    //   .then(function(table) {
+    //     console.log(table);
+    //     templateVars.responses = table;
+    //     res.render("../views/vote_finished.ejs", templateVars);
+    //   });
     computeBorda();
   });
 

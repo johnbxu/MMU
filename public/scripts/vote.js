@@ -13,7 +13,8 @@ $(() => {
     $.ajax({
       url: `/polls/${id}`,
       method: 'PUT',
-      data: JSON.stringify(order),
+      data: {obj: order},
+      dataType: JSON,
       success: function(result) {
         console.log(result);
       }
