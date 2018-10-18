@@ -15,26 +15,40 @@
   </header>
 
   <body>
-    <h1>New Poll</h1>
-    <div class="container">
-      <header>
-        Instructions
-      </header>
-      <h1>Title</h1>
+    <div class="jumbotron" style="margin: 5%; text-align: center; display:flex; flex-direction:column">
+      <h2>New Poll</h2>
       <form id="newPoll" action="/polls/new" method="post">
-        <span>Email: </span><input type="email" name="email" />
-        <span>Name: </span><input type="text" name="name" />
-        <div class="options">
-          <h2>Options:</h2>
-          <input type="text" class="option" name="option1" id="option1"/>
-          <input type="text" class="option" name="option2" id="option2"/>
+        <p>Please provide a question and at least 2 answers. Your e-mail and name are needed to create a poll.</p>
+        <div style="text-align: left; width:30%; margin: 4rem; float:left">
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" class="form-control" id="email" >
+          </div>
+          <div class="form-group">
+            <label for="pwd">Your Name:</label>
+            <input type="password" class="form-control" id="name">
+          </div>
         </div>
-        <button type="button" class="newOption">&#x002B;</button>
-        <button type="button" class="deleteOption">-</button>
-        <button type="submit" id="submitNewPoll" form="newPoll">Submit</button>
+        <div style="text-align: left; width:60%; margin: 4rem; float:left">
+          <div style="flex-direction: column">
+            <div class="form-group">
+              <label for="email">What is the question you want to ask?</label>
+              <input type="email" class="form-control" id="poll" >
+            </div>
+            <div class="options form-group">
+              <label>Your selection of responses:</label>
+              <input type="text" class="option form-group form-control" id="option1"/>
+              <input type="text" class="option form-group form-control" id="option2"/>
+            </div>
+          <div style="display: flex; justify-content: space-between">
+            <div>
+              <button type="button" id="newOption" class="btn btn-info">&#x002B; Add Row</button>
+              <button type="button" id="deleteOption" class="btn btn-info">- Delete Row</button>
+            </div>
+            <button type="submit" id="submitNewPoll" form="newPoll" class="btn btn-primary">Submit</button>
+          </div>
+        </div>
       </form>
-
-
     </div>
   </body>
 </html>
