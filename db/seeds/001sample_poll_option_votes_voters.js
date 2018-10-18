@@ -10,9 +10,9 @@ exports.seed = function(knex, Promise) {
                             end_date: tomorrow,
                             randomURL: '23456'}).returning('id')
                 .then(function(id) {
-                    return Promise.all( [ knex('response').insert({poll_id: id[0], text: '(2)Option 1'}),
-                                          knex('response').insert({poll_id: id[0], text: '(2)Option 2'}),
-                                          knex('response').insert({poll_id: id[0], text: '(2)Option 3'})])
+                    return Promise.all( [ knex('response').insert({poll_id: id[0], text: '(2)Option 1', borda: 0}),
+                                          knex('response').insert({poll_id: id[0], text: '(2)Option 2', borda: 0}),
+                                          knex('response').insert({poll_id: id[0], text: '(2)Option 3', borda: 0})])
     }),
     // Inserts seed entries
     knex('poll').insert(  { text: 'A Sample Question',
@@ -21,9 +21,9 @@ exports.seed = function(knex, Promise) {
                             end_date: tomorrow,
                             randomURL: '12345'}).returning('id')
                 .then(function(id) {
-                    return Promise.all( [ knex('response').insert({poll_id: id[0], text: 'Option 1'}),
-                                          knex('response').insert({poll_id: id[0], text: 'Option 2'}),
-                                          knex('response').insert({poll_id: id[0], text: 'Option 3'})])
+                    return Promise.all( [ knex('response').insert({poll_id: id[0], text: 'Option 1', borda: 0}),
+                                          knex('response').insert({poll_id: id[0], text: 'Option 2', borda: 0}),
+                                          knex('response').insert({poll_id: id[0], text: 'Option 3', borda: 0})])
     })
   ]);
 };
