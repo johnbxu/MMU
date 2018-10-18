@@ -21,7 +21,7 @@ module.exports = (knex) => {
     res.render("../views/new_poll.ejs");
   });
 
-  // Endpoint for creating a poll. Redir to polls/:id/admin if success
+  // Endpoint for creating a poll. Redir to polls/:id/votes if success
   // where :id is a randomly generated 8 char long string
   router.post("/new", (req, res) => {
     console.log(req);
@@ -53,7 +53,7 @@ module.exports = (knex) => {
       }).then((result) => {
         knex.table('response').insert(result).then(function(){
           req.session.email = req.body.email;
-          res.redirect(`../polls/${uniqueURL}/admin`);
+          res.redirect(`/polls/${uniqueURL}/votes`);
         })
       });
   });
@@ -91,7 +91,7 @@ module.exports = (knex) => {
   // Endpoint for submitting the vote. Redir to /polls/:id/votes on success
   // Logic is: find poll using randomURL; find responses using poll_id; find votes using
   //  response_id; loop through votes and responses and if reponse_id === id, increment
-  router.post("/:id", (req, res) => {
+  router.put("/:id", (req, res) => {
     const templateVars = {};
     knex
       .select('*')
@@ -119,16 +119,20 @@ module.exports = (knex) => {
                       }
                     }
                   }
-              });
+                });
             });
           })
-        })
-    res.redirect("/:id/votes")
+          .then(function() {
+            res.redirect("/:id/votes", templateVars);
+          });
+        });
   });
 
   // Submit email address to soft-login and assign cookie
-  router.post("/:id/admin", (req, res) => {
+  router.put("/:id/votes", (req, res) => {
+    // req.session.email = req.body.email;
     // add cookie
+    res.redirect(`/${req.params.id}/votes`);
   });
 
   // Endpoint for displaying the current votes status
@@ -179,6 +183,29 @@ module.exports = (knex) => {
         }
       });
   });
+
+  // Update a single response: searches for poll using randomURL, then checks if
+  //  owner, and if true, searches for response using id, and update the text
+  router.put("/:id/:response", (req, res) => {
+    knex
+      .select('*')
+      .from('poll')
+      .where('poll.randomURL', req.params.id)
+      .then((response) => {
+        if (req.session.email === response[0].creator_email) {
+        knex('response')
+          .where('poll_id', response[0].id)
+          .andWhere('id', req.params.response)
+          .update({
+            text: req.body.text
+          })
+          .then(function(){
+            console.log('attempting update');
+            res.redirect(`/polls/${req.params.id}/votes`);
+          });
+        }
+      });
+  })
 
   return router;
 }
