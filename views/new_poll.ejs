@@ -6,6 +6,8 @@
   </head>
   <header>
     <% include ./partials/_nav.ejs %>
+    <script type="text/javascript" src="/scripts/newFields.js"></script>
+    <script type="text/javascript" src="/scripts/postNew.js"></script>
   </header>
 
   <body>
@@ -17,30 +19,34 @@
         <div style="text-align: left">
           <div class="form-group">
             <label for="email">Email:</label>
-            <input type="email" class="form-control" id="email" >
+            <input type="email" class="form-control" id="email" required>
           </div>
           <div class="form-group">
-            <label for="pwd">Your Name:</label>
-            <input type="text" class="form-control" id="name">
+            <label for="name">Your Name:</label>
+            <input type="text" class="form-control" id="name" required>
+          </div>
+          <div class="form-group">
+            <label for="end">When should this poll end?</label>
+            <input type="date" class="form-control" id="end" required>
           </div>
         </div>
         <div style="text-align: left; margin-left: 10rem;flex-grow: 2"">
           <div style="flex-direction: column">
             <div class="form-group">
-              <label for="email">What is the question you want to ask?</label>
-              <input type="email" class="form-control" id="poll" >
+              <label for="question">What is the question you want to ask?</label>
+              <input type="text" class="form-control" id="question" required>
             </div>
-            <div class="options form-group">
+            <div id="responses" class="options form-group">
               <label>Your selection of responses:</label>
-              <input type="text" class="option form-group form-control" id="option1"/>
-              <input type="text" class="option form-group form-control" id="option2"/>
+              <input type="text" class="option form-group form-control" id="option1" required>
+              <input type="text" class="option form-group form-control" id="option2" required>
             </div>
           <div style="display: flex; justify-content: space-between">
             <div>
               <button type="button" id="newOption" class="btn btn-info">&#x002B; Add Row</button>
               <button type="button" id="deleteOption" class="btn btn-info">- Delete Row</button>
             </div>
-            <button type="submit" id="submitNewPoll" form="newPoll" class="btn btn-primary">Submit</button>
+            <button type="submit" id="submitNewPoll" form="newPoll" class="btn btn-primary" action="/polls/new" method="POST">Submit</button>
           </div>
         </div>
       </form>

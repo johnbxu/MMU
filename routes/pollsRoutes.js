@@ -48,23 +48,25 @@ module.exports = (knex) => {
 
   // Endpoint for creating a poll. Redir to polls/:id/votes if success
   // where :id is a randomly generated 8 char long string
-  router.post("/new", (req, res) => {
-    // req.session.email = req.body.email;
-    // req.session.email = 'sdgdfgfd';
 
+  router.post("/new", (req, res) => {
     // creates an object that knex can insert
     // the keys are the column names in the poll table
-    console.log(req.body);
+    console.log("reqbody",req.body);
+    
+    let receivedData = req.body;
+
+    console.log("receivedData", receivedData)
     const uniqueURL = generateRandomString(8);
-    const newPoll = { text: req.body.question,
-      creator_email: req.body.email,
+    const newPoll = { text: receivedData.question,
+      creator_email: receivedData.email,
       date_created: new Date(),
       randomURL: uniqueURL,
-      end_date: req.body.end };
+      end_date: receivedData.end};
 
       // by default this router expects to receive all the options
       // in a JSON.stringify string
-      let receivedOptions = JSON.parse(req.body.options);
+      let receivedOptions = receivedData.options;
 
       // next we insert the new question as a new instance of the poll table
       // insertion returns the unique id of the new poll
@@ -80,7 +82,7 @@ module.exports = (knex) => {
         });
       }).then((result) => {
         knex.table('response').insert(result).then(function(){
-          req.session.email = req.body.email;
+          req.session.email = receivedData.email;
           res.redirect(`/polls/${uniqueURL}/votes`);
         })
       });
@@ -125,7 +127,7 @@ module.exports = (knex) => {
 
   // Submit email address to soft-login and assign cookie
   router.put("/:id/votes", (req, res) => {
-    // req.session.email = req.body.email;
+    // req.session.email = receivedData.email;
     // add cookie
     res.redirect(`/${req.params.id}/votes`);
   });
