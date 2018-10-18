@@ -87,11 +87,22 @@ module.exports = (knex) => {
     })
   });
 
+  // This searches for and deletes a poll
   router.delete("/:id", (req, res) => {
-    knex("poll").where("randomURL", req.params.id).del().then(function(){
-      console.log(req.params.id);
-    });
+    knex("poll")
+      .select("*")
+      .where("randomURL", req.params.id)
+      .then(function(response) {
+          if (req.session.email === response[0].creator_email) {
+            knex("poll").where("randomURL", req.params.id).del().then(function(){
+              console.log(req.params.id);
+            });
+          } else {
+            res.redirect("/error")
+          }
+      });
   });
+
   // Endpoint for getting the voting page
   // Queries DB for randomURL and outputs data associated with the row
   router.get("/:id", (req, res) => {
@@ -170,20 +181,23 @@ module.exports = (knex) => {
   });
 
 
-
+  // Searches for a poll based on randomURL and if owner, searches for specific
+  //  response using id, then deletes
   router.delete("/:id/:response", (req, res) => {
     knex
       .select('*')
       .from('poll')
       .where('poll.randomURL', req.params.id)
-      .returning('id')
-      .then((poll_id) => {
+      .then((response) => {
+        if (req.session.email === response[0].creator_email) {
         knex('response')
-          .where('poll_id', poll_id[0].id)
-          .andWhere('id', Number(req.params.response))
-          .del().then(function(){
+          .where('poll_id', response[0].id)
+          .andWhere('id', req.params.response)
+          .del()
+          .then(function(){
             console.log('attempting delete')
           });
+        }
       });
   });
 
