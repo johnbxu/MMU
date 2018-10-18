@@ -5,6 +5,12 @@ const express = require('express');
 const router  = express.Router();
 
 
+const api_key = '15ee2e12e8149b90d5ef7787213e7e15-a3d67641-89656c39';
+
+const DOMAIN = 'sandbox419377d991934b54ac091534aad574dd.mailgun.org';
+
+const mailgun = require('mailgun-js')({apiKey: api_key, domain: DOMAIN});
+
 // base 36 to include all 26 letters and 10 numbers
 // returns a numberOfChars long string starting at index 2
 function generateRandomString(numberOfChars) {
@@ -111,11 +117,11 @@ module.exports = (knex) => {
                 .from('votes')
                 .where('response_id', ele.id)
                 .then(function(response) {
-                  templateVars[ele.id]votes = response;
-                  for (const vote of templateVars[ele.id]votes) {
+                  templateVars[ele.id].votes = response;
+                  for (const vote of templateVars[ele.id].votes) {
                     for (const response of templateVars.responses) {
                       if (response.id === vote.response_id) {
-                        templateVars[response]borda += vote.bordaValue;
+                        templateVars[response].borda += vote.bordaValue;
                       }
                     }
                   }
@@ -207,5 +213,17 @@ module.exports = (knex) => {
       });
   })
 
+  router.post("/test/email", (req, res) => {
+    const data = {
+      from: 'Excited User <me@samples.mailgun.org>',
+      // to:
+      subject: 'Hello',
+      text: 'Testing some Mailgun awesomness!'
+    };
+    mailgun.messages().send(data, function (error, body) {
+      console.log(body);
+    });
+
+  })
   return router;
 }

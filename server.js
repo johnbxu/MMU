@@ -17,6 +17,7 @@ const knexLogger  = require('knex-logger');
 const cookieSession = require('cookie-session');
 const methodOverride = require('method-override');
 
+
 // Seperated Routes for each Resource
 const pollsRoutes = require("./routes/pollsRoutes.js");
 
