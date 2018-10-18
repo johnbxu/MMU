@@ -19,15 +19,14 @@ module.exports = (knex) => {
 
   // Endpoint for getting the create-new-poll page
   router.get("/new", (req, res) => {
-    req.session.email = 'sdgdfgfd';
-    // req.session.email = req.body.email;
-
     res.render("../views/new_poll.ejs");
   });
 
   // Endpoint for creating a poll. Redir to polls/:id/votes if success
   // where :id is a randomly generated 8 char long string
   router.post("/new", (req, res) => {
+    // req.session.email = req.body.email;
+    req.session.email = 'sdgdfgfd';
     console.log(req);
     // creates an object that knex can insert
     // the keys are the column names in the poll table
