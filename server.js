@@ -62,6 +62,12 @@ app.get("/error", (req, res) => {
   res.render("error");
 });
 
+//The 404 Route
+app.get('*', function(req, res){
+  let templateVars = {  errorCode: 404, errorMessage: "The page you're looking for does not exist!" }
+  res.render('error', templateVars);
+});
+
 app.listen(PORT, () => {
   console.log("Example app listening on port " + PORT);
 });
