@@ -3,12 +3,18 @@
 // Importing packages
 const express = require('express');
 const router  = express.Router();
-const app = express();
-const bodyParser = require('body-parser');
+// const app = express();
+// const bodyParser = require('body-parser');
+// const cookieSession = require('cookie-session');
 
 // Using packages
-app.set('view engine', 'ejs');
-app.use(bodyParser.urlencoded({extended: true}));
+// app.set('view engine', 'ejs');
+// app.use(bodyParser.urlencoded({extended: true}));
+// app.use(cookieSession({
+//   name: 'session',
+//   keys: ['keydonut', 'keyeclair'],
+//   maxAge: 24 * 60 * 60 * 1000 // 24 hours
+// }));
 
 // base 36 to include all 26 letters and 10 numbers
 // returns a numberOfChars long string starting at index 2
@@ -17,12 +23,11 @@ function generateRandomString(numberOfChars) {
 }
 
 module.exports = (knex) => {
-  // router.get("/", (req, res) => {
-  //
-  // });
 
   // Endpoint for getting the create-new-poll page
   router.get("/new", (req, res) => {
+    req.session.email = 'sdgdfgfd';
+
     res.render("../views/new_poll.ejs");
   });
 
@@ -36,6 +41,10 @@ module.exports = (knex) => {
       templateVars.poll = result[0];
       pollID = templateVars.poll['id'];
 
+      if (req.session.email !== templateVars.poll.creator_email) {
+        return res.sendStatus(404);
+        // res.redirect('/error');
+      }
       // once the correct poll is identified it is passed into the variables object
       // the pollID variable is used to find the appropriate options for this poll
     }).then(function() {
@@ -46,14 +55,20 @@ module.exports = (knex) => {
       }).then(function() {
 
         // ejs uses the variables to render the page
-        res.render("../views/admin.ejs", templateVars);
+        return res.render("../views/admin.ejs", templateVars);
       })
     })
+  });
+
+  // Submit email address to soft-login and assign cookie
+  router.post("/:id/admin", (req, res) => {
+    // add cookie
   });
 
   // Endpoint for creating a poll. Redir to polls/:id/admin if success
   // where :id is a randomly generated 8 char long string
   router.post("/new", (req, res) => {
+    console.log(req);
     // creates an object that knex can insert
     // the keys are the column names in the poll table
     let uniqueURL = generateRandomString(8);
@@ -79,9 +94,14 @@ module.exports = (knex) => {
       return receivedOptions.map(element => {
         return {poll_id: pollID, text: element};
       });
-    }).then(result => {
-      knex.table('response').insert(result).then(res.redirect(`../polls/${uniqueURL}/admin`));
+    }).then((result) => {
+
+      knex.table('response').insert(result).then(function(){
+
+        req.session.email = req.body.email;
+        res.redirect(`../polls/${uniqueURL}/admin`);
     })
+  });
   });
 
   // Endpoint for getting the voting page
@@ -101,7 +121,23 @@ module.exports = (knex) => {
 
   // Endpoint for submitting the vote. Redir to /polls/:id/votes on success
   router.post("/:id", (req, res) => {
-
+    knex
+      .select('*')
+      .from('poll')
+      .where('poll.randomURL', req.params.id)
+      .then(function(response) {
+        variables.poll = response[0];
+        pollId = variables.poll.id;
+      }).then(function() {
+        knex
+          .select('*')
+          .from('response')
+          .where('poll_id', pollId)
+          .then(function(response) {
+            variables.responses = response[0];
+            console.log(variables);
+          });
+        })
     res.redirect("/:id/votes")
   });
 
