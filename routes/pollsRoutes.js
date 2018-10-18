@@ -52,11 +52,9 @@ module.exports = (knex) => {
   router.post("/new", (req, res) => {
     // creates an object that knex can insert
     // the keys are the column names in the poll table
-    console.log("reqbody",req.body);
 
     let receivedData = req.body;
 
-    console.log("receivedData", receivedData)
     const uniqueURL = generateRandomString(8);
     const newPoll = { text: receivedData.question,
       creator_email: receivedData.email,
@@ -83,7 +81,7 @@ module.exports = (knex) => {
       }).then((result) => {
         knex.table('response').insert(result).then(function(){
           req.session.email = receivedData.email;
-          res.redirect(`/${uniqueURL}/votes`);
+          res.redirect(`/polls/${uniqueURL}/votes`);
         })
       });
   });
@@ -96,7 +94,7 @@ module.exports = (knex) => {
       .then(function(response) {
           if (req.session.email === response[0].creator_email) {
             knex("poll").where("randomURL", req.params.id).del().then(function(){
-              console.log(req.params.id);
+              console.log('deleted');
             });
           } else {
             res.redirect("/error")
@@ -124,7 +122,6 @@ module.exports = (knex) => {
   router.put("/:id", (req, res) => {
     const options = req.body.obj;
     const borda = {};
-    console.log(options);
     for (let i = 0; i < options.length; i++) {
       knex('response')
         .where('id', options[i])
@@ -162,7 +159,6 @@ module.exports = (knex) => {
       .select('*')
       .where('poll.randomURL', req.params.id)
       .then(function(table) {
-        console.log(table);
         templateVars.responses = table;
         res.render("../views/vote_finished.ejs", templateVars);
       });
@@ -249,7 +245,7 @@ module.exports = (knex) => {
       text: 'Testing some Mailgun awesomness!'
     };
     mailgun.messages().send(data, function (error, body) {
-      console.log(body);
+      console.log('emailed');
     });
 
   })
