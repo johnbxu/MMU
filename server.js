@@ -17,6 +17,7 @@ const knexLogger  = require('knex-logger');
 const cookieSession = require('cookie-session');
 const methodOverride = require('method-override');
 
+
 // Seperated Routes for each Resource
 const pollsRoutes = require("./routes/pollsRoutes.js");
 
@@ -25,13 +26,16 @@ const pollsRoutes = require("./routes/pollsRoutes.js");
 //         The :status token will be colored red for server error codes, yellow for client error codes, cyan for redirection codes, and uncolored for all other codes.
 app.use(morgan('dev'));
 
+// Enables encrypted cookies
 app.use(cookieSession({
   name: 'session',
   keys: ['keydonut', 'keyeclair'],
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
 
+// Allows use of put and delete methods
 app.use(methodOverride('_method'));
+
 // Log knex SQL queries to STDOUT as well
 app.use(knexLogger(knex));
 
