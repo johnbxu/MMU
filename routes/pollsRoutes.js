@@ -94,23 +94,29 @@ module.exports = (knex) => {
   // Endpoint for submitting the vote. Redir to /polls/:id/votes on success
   // Logic is: find poll using randomURL; find responses using poll_id; find votes using
   //  response_id; loop through votes and responses and if reponse_id === id, increment
-  router.post("/:id", (req, res) => {
-    const templateVars = {};
+  router.put("/:id", (req, res) => {
+        const sum = {};
+
         knex('poll')
           .join('response', 'poll.id','=', 'response.poll_id')
           .join('vote', 'vote.response_id', '=', 'response.id')
           .select('*')
           .where('poll.randomURL', req.params.id)
           .then(function(table) {
-            console.log(table);
             table.forEach(vote => {
-              knex('response')
-                .where('id', vote.response_id)
-                .increment('borda', vote.bordaValue)
-                .then(function(){
-                  console.log('borda updated');
-                });
+              if (!sum[vote.response_id]) {
+                sum[vote.response_id] = 0;
+              }
+              sum[vote.response_id] += vote.bordaValue;
             });
+            for (let id in sum) {
+              knex('response')
+                .where('id', Number(id))
+                .update('borda', sum[id])
+                .then(function(){
+                  console.log('updated');
+                })
+            }
           });
   });
 
