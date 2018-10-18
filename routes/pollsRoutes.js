@@ -54,6 +54,7 @@ module.exports = (knex) => {
 
     // creates an object that knex can insert
     // the keys are the column names in the poll table
+    console.log(req.body);
     const uniqueURL = generateRandomString(8);
     const newPoll = { text: req.body.question,
       creator_email: req.body.email,

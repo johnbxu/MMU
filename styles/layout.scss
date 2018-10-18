@@ -7,7 +7,12 @@ body {
 
   .container {
     background: rgba(142, 142, 142, 0.91);
-    width: 40rem;
+    width: 80rem;
     height: 80vh;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
   }
 }
