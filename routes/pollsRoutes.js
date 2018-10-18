@@ -19,16 +19,15 @@ module.exports = (knex) => {
 
   // Endpoint for getting the create-new-poll page
   router.get("/new", (req, res) => {
-    req.session.email = 'sdgdfgfd';
-    // req.session.email = req.body.email;
-
     res.render("../views/new_poll.ejs");
   });
 
   // Endpoint for creating a poll. Redir to polls/:id/votes if success
   // where :id is a randomly generated 8 char long string
   router.post("/new", (req, res) => {
-    console.log(req);
+    // req.session.email = req.body.email;
+    // req.session.email = 'sdgdfgfd';
+
     // creates an object that knex can insert
     // the keys are the column names in the poll table
     const uniqueURL = generateRandomString(8);
@@ -95,41 +94,24 @@ module.exports = (knex) => {
   // Endpoint for submitting the vote. Redir to /polls/:id/votes on success
   // Logic is: find poll using randomURL; find responses using poll_id; find votes using
   //  response_id; loop through votes and responses and if reponse_id === id, increment
-  router.put("/:id", (req, res) => {
+  router.post("/:id", (req, res) => {
     const templateVars = {};
-    knex
-      .select('*')
-      .from('poll')
-      .where('poll.randomURL', req.params.id)
-      .then(function(response) {
-        templateVars.poll = response[0];
-        knex
+        knex('poll')
+          .join('response', 'poll.id','=', 'response.poll_id')
+          .join('vote', 'vote.response_id', '=', 'response.id')
           .select('*')
-          .from('response')
-          .where('poll_id', req.params.id)
-          .then(function(response) {
-            templateVars.responses = response;
-            templateVars.responses.forEach(ele => {
-              knex
-                .select('*')
-                .from('votes')
-                .where('response_id', ele.id)
-                .then(function(response) {
-                  templateVars[ele.id].votes = response;
-                  for (const vote of templateVars[ele.id].votes) {
-                    for (const response of templateVars.responses) {
-                      if (response.id === vote.response_id) {
-                        templateVars[response].borda += vote.bordaValue;
-                      }
-                    }
-                  }
+          .where('poll.randomURL', req.params.id)
+          .then(function(table) {
+            console.log(table);
+            table.forEach(vote => {
+              knex('response')
+                .where('id', vote.response_id)
+                .increment('borda', vote.bordaValue)
+                .then(function(){
+                  console.log('borda updated');
                 });
             });
-          })
-          .then(function() {
-            res.redirect("/:id/votes", templateVars);
           });
-        });
   });
 
   // Submit email address to soft-login and assign cookie
