@@ -13,7 +13,9 @@ const knexConfig  = require("./knexfile");
 const knex        = require("knex")(knexConfig[ENV]);
 const morgan      = require('morgan');
 const knexLogger  = require('knex-logger');
+
 const cookieSession = require('cookie-session');
+const methodOverride = require('method-override');
 
 // Seperated Routes for each Resource
 const pollsRoutes = require("./routes/pollsRoutes.js");
@@ -29,6 +31,7 @@ app.use(cookieSession({
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
 
+app.use(methodOverride('_method'));
 // Log knex SQL queries to STDOUT as well
 app.use(knexLogger(knex));
 
