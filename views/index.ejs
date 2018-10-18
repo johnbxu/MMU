@@ -2,24 +2,32 @@
 <html lang="en">
   <head>
     <title>Home Page</title>
-
-    <link rel="stylesheet" href="/vendor/normalize-4.1.1.css" type="text/css" />
-    <link rel="stylesheet" href="/vendor/border-box.css" type="text/css" />
-    <link rel="stylesheet" href="/styles/layout.css" type="text/css" />
-
-    <script type="text/javascript" src="/vendor/jquery-3.0.0.js"></script>
-    <script type="text/javascript" src="/scripts/app.js"></script>
+    <% include ./partials/_head.ejs %>
   </head>
   <header>
-    <% include ../public/partials/_nav.ejs %>
+    <% include ./partials/_nav.ejs %>
   </header>
-
   <body>
-    <h1>Hello World!</h1>
-    <div class="container">
-      <h1>WELCOME</h1>
-      <h2>The Mind Maker Upper Will Make Up Your Mind!</h2>
-      <button class="btn" action="/polls/new">New Poll</button>
+    <div class="jumbotron" style="margin: 5%; text-align: center">
+      <h1>We are here for you</h1><br>
+      <br>
+      <div style="background-color: white; text-align: left; margin:0 30% 0; padding: 2rem; border-radius: 1rem">
+        <blockquote class="blockquote">
+          <p class="mb-0">My friends can never decide what movie to watch!</p>
+          <footer class="blockquote-footer">You, last week</footer>
+        </blockquote>
+      </div>
+        <br>
+      <div style="background-color: white; text-align: left; margin:0 30% 0; padding: 2rem; border-radius: 1rem">
+        <blockquote class="blockquote">
+          <p class="mb-0">We are uber-dorks and we want to decide which pokemon is best!</p>
+          <footer class="blockquote-footer">You, 12 years ago</footer>
+        </blockquote>
+      </div>
+      <br>
+      <br><h3>This does not have to continue! We can have help you make up your mind.</i></h3>
+      <br>
+      <button class="btn btn-outline-success btn-lg" style="width:50%" action="/polls/new">New Poll</button>
     </div>
   </body>
 </html>
