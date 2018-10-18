@@ -4,11 +4,9 @@
 const express = require('express');
 const router  = express.Router();
 
-
+// Mailgun
 const api_key = '15ee2e12e8149b90d5ef7787213e7e15-a3d67641-89656c39';
-
 const DOMAIN = 'sandbox419377d991934b54ac091534aad574dd.mailgun.org';
-
 const mailgun = require('mailgun-js')({apiKey: api_key, domain: DOMAIN});
 
 // base 36 to include all 26 letters and 10 numbers
@@ -33,8 +31,8 @@ module.exports = (knex) => {
     console.log(req);
     // creates an object that knex can insert
     // the keys are the column names in the poll table
-    let uniqueURL = generateRandomString(8);
-    let newPoll = { text: req.body.question,
+    const uniqueURL = generateRandomString(8);
+    const newPoll = { text: req.body.question,
       creator_email: req.body.email,
       date_created: new Date(),
       randomURL: uniqueURL,
@@ -164,6 +162,7 @@ module.exports = (knex) => {
           .then(function(options) {
             templateVars.options = options;
             console.log(templateVars);
+            console.log(options);
             // ejs uses the variables to render the page
             res.render("../views/vote_finished.ejs", templateVars);
           });
