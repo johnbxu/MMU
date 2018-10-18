@@ -16,6 +16,30 @@ function generateRandomString(numberOfChars) {
 }
 
 module.exports = (knex) => {
+  const computeBorda = () => {
+    const sum = {};
+    knex('poll')
+      .join('response', 'poll.id','=', 'response.poll_id')
+      .join('vote', 'vote.response_id', '=', 'response.id')
+      .select('*')
+      .where('poll.randomURL', req.params.id)
+      .then(function(table) {
+        table.forEach(vote => {
+          if (!sum[vote.response_id]) {
+            sum[vote.response_id] = 0;
+          }
+          sum[vote.response_id] += vote.bordaValue;
+        });
+        for (let id in sum) {
+          knex('response')
+            .where('id', Number(id))
+            .update('borda', sum[id])
+            .then(function(){
+              console.log('updated');
+            })
+        }
+      });
+  }
 
   // Endpoint for getting the create-new-poll page
   router.get("/new", (req, res) => {
@@ -26,8 +50,13 @@ module.exports = (knex) => {
   // where :id is a randomly generated 8 char long string
   router.post("/new", (req, res) => {
     // req.session.email = req.body.email;
+<<<<<<< HEAD
     req.session.email = 'sdgdfgfd';
     console.log(req);
+=======
+    // req.session.email = 'sdgdfgfd';
+
+>>>>>>> dev
     // creates an object that knex can insert
     // the keys are the column names in the poll table
     const uniqueURL = generateRandomString(8);
@@ -95,40 +124,7 @@ module.exports = (knex) => {
   // Logic is: find poll using randomURL; find responses using poll_id; find votes using
   //  response_id; loop through votes and responses and if reponse_id === id, increment
   router.put("/:id", (req, res) => {
-    const templateVars = {};
-    knex
-      .select('*')
-      .from('poll')
-      .where('poll.randomURL', req.params.id)
-      .then(function(response) {
-        templateVars.poll = response[0];
-        knex
-          .select('*')
-          .from('response')
-          .where('poll_id', req.params.id)
-          .then(function(response) {
-            templateVars.responses = response;
-            templateVars.responses.forEach(ele => {
-              knex
-                .select('*')
-                .from('votes')
-                .where('response_id', ele.id)
-                .then(function(response) {
-                  templateVars[ele.id].votes = response;
-                  for (const vote of templateVars[ele.id].votes) {
-                    for (const response of templateVars.responses) {
-                      if (response.id === vote.response_id) {
-                        templateVars[response].borda += vote.bordaValue;
-                      }
-                    }
-                  }
-                });
-            });
-          })
-          .then(function() {
-            res.redirect("/:id/votes", templateVars);
-          });
-        });
+
   });
 
   // Submit email address to soft-login and assign cookie
