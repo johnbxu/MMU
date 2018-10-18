@@ -9,21 +9,22 @@
   </header>
 
   <body>
-    <div class="jumbotron" style="margin: 5%; text-align: center; display:flex; flex-direction:column">
+    <div class="jumbotron" style="margin:5%; text-align: center; display:flex; flex-direction:column">
       <h2>New Poll</h2>
-      <form id="newPoll" action="/polls/new" method="post">
-        <p>Please provide a question and at least 2 answers. Your e-mail and name are needed to create a poll.</p>
-        <div style="text-align: left; width:30%; margin: 4rem; float:left">
+      <p>Please provide a question and at least 2 answers. Your e-mail and name are needed to create a poll.</p>
+      <form id="newPoll" action="/polls/new" method="post" style="display:flex; padding: 5rem">
+        
+        <div style="text-align: left">
           <div class="form-group">
             <label for="email">Email:</label>
             <input type="email" class="form-control" id="email" >
           </div>
           <div class="form-group">
             <label for="pwd">Your Name:</label>
-            <input type="password" class="form-control" id="name">
+            <input type="text" class="form-control" id="name">
           </div>
         </div>
-        <div style="text-align: left; width:60%; margin: 4rem; float:left">
+        <div style="text-align: left; margin-left: 10rem;flex-grow: 2"">
           <div style="flex-direction: column">
             <div class="form-group">
               <label for="email">What is the question you want to ask?</label>
