@@ -72,7 +72,6 @@ module.exports = (knex) => {
       knex.table('poll').insert(newPoll).returning('id').then(id => {
         pollID = id[0];
       }).then(function() {
-
         // using the received pollid we can parse an array of objects
         // which knex can insert into the response table
         return receivedOptions.map(element => {
@@ -81,7 +80,7 @@ module.exports = (knex) => {
       }).then((result) => {
         knex.table('response').insert(result).then(function(){
           req.session.email = receivedData.email;
-          res.redirect(`/polls/${uniqueURL}/votes`);
+          res.status(200).json({url: `/polls/${uniqueURL}/votes`});
         })
       });
   });

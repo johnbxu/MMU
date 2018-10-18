@@ -11,14 +11,18 @@ $(() => {
     formVariables.name = $("#name").val();
     formVariables.email = $("#email").val()
     formVariables.end = new Date($("#end").val()).toISOString();
-    
+
     $.ajax({
       url: `/polls/new`,
       method: 'POST',
       data: formVariables,
       dataType: 'json'
-    }).done(function(){
-      console.log("successfully posted")
+    }).done(function(response) {
+      console.log('asdasdasd');
+
+      console.log(response);
+        window.location.href = "http://localhost:8080"+response.url;
+
     })
   });
 });
