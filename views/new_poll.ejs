@@ -21,13 +21,17 @@
         Instructions
       </header>
       <h1>Title</h1>
-      <form>
-        <input type="text" />
+      <form id="newPoll" action="/polls/new" method="post">
+        <span>Email: </span><input type="email" name="email" />
+        <span>Name: </span><input type="text" name="name" />
         <div class="options">
-          <input type="text"  /></li>
-          <input type="text"  /></li>
-          <button>&#x002B;</button>
+          <h2>Options:</h2>
+          <input type="text" class="option" name="option1" id="option1"/>
+          <input type="text" class="option" name="option2" id="option2"/>
         </div>
+        <button type="button" class="newOption">&#x002B;</button>
+        <button type="button" class="deleteOption">-</button>
+        <button type="submit" id="submitNewPoll" form="newPoll">Submit</button>
       </form>
 
 

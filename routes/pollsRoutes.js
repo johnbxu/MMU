@@ -50,15 +50,11 @@ module.exports = (knex) => {
   // where :id is a randomly generated 8 char long string
   router.post("/new", (req, res) => {
     // req.session.email = req.body.email;
-<<<<<<< HEAD
-    req.session.email = 'sdgdfgfd';
-    console.log(req);
-=======
     // req.session.email = 'sdgdfgfd';
 
->>>>>>> dev
     // creates an object that knex can insert
     // the keys are the column names in the poll table
+    console.log(req.body);
     const uniqueURL = generateRandomString(8);
     const newPoll = { text: req.body.question,
       creator_email: req.body.email,

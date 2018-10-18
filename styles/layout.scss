@@ -10,4 +10,9 @@ body {
     width: 80rem;
     height: 80vh;
   }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+  }
 }
