@@ -108,38 +108,39 @@ module.exports = (knex) => {
   });
 
   // Endpoint for submitting the vote. Redir to /polls/:id/votes on success
+  // Logic is: find poll using randomURL; find responses using poll_id; find votes using
+  //  response_id; loop through votes and responses and if reponse_id === id, increment
   router.post("/:id", (req, res) => {
+    const variables = {};
     knex
       .select('*')
       .from('poll')
-      .join('response')
       .where('poll.randomURL', req.params.id)
       .then(function(response) {
         variables.poll = response[0];
-        pollId = variables.poll.id;
-      }).then(function() {
         knex
           .select('*')
           .from('response')
-          .where('poll_id', pollId)
+          .where('poll_id', req.params.id)
           .then(function(response) {
             variables.responses = response;
-            knex
-              .select('*')
-              .from('votes')
-              .where('response_id', variables.responses.id)
-              .then(function(response) {
-                variables.votes = response;
-                for (const vote of variables.votes) {
-                  for (const response of variables.responses) {
-                    if (response.id === vote.response_id) {
-                      response.borda += vote.bordaValue;
+            variables.responses.forEach(ele => {
+              knex
+                .select('*')
+                .from('votes')
+                .where('response_id', ele.id)
+                .then(function(response) {
+                  variables[ele.id]votes = response;
+                  for (const vote of variables[ele.id]votes) {
+                    for (const response of variables.responses) {
+                      if (response.id === vote.response_id) {
+                        variables[response]borda += vote.bordaValue;
+                      }
                     }
                   }
-                }
               });
             });
-          console.log(variables);
+            })
         })
     res.redirect("/:id/votes")
   });
@@ -164,7 +165,6 @@ module.exports = (knex) => {
           .then(function(response) {
             variables.responses = response[0];
           });
-          console.log(variables);
         });
     res.render("../views/vote_finished.ejs");
   });
