@@ -3,12 +3,15 @@
 // Importing packages
 const express = require('express');
 const router  = express.Router();
-const app = express();
-const bodyParser = require('body-parser');
+// const app = express();
+// const bodyParser = require('body-parser');
+//
+
+
 
 // Using packages
-app.set('view engine', 'ejs');
-app.use(bodyParser.urlencoded({extended: true}));
+// app.set('view engine', 'ejs');
+// app.use(bodyParser.urlencoded({extended: true}));
 
 // base 36 to include all 26 letters and 10 numbers
 // returns a numberOfChars long string starting at index 2
@@ -84,6 +87,11 @@ module.exports = (knex) => {
     })
   });
 
+  router.delete("/:id", (req, res) => {
+    knex("poll").where("randomURL", req.params.id).del().then(function(){
+      console.log(req.params.id);
+    });
+  });
   // Endpoint for getting the voting page
   // Queries DB for randomURL and outputs data associated with the row
   router.get("/:id", (req, res) => {
@@ -128,7 +136,7 @@ module.exports = (knex) => {
                       response.borda += vote.bordaValue;
                     }
                   }
-                })
+                }
               });
             });
           console.log(variables);
@@ -161,6 +169,23 @@ module.exports = (knex) => {
     res.render("../views/vote_finished.ejs");
   });
 
+
+
+  router.delete("/:id/:response", (req, res) => {
+    knex
+      .select('*')
+      .from('poll')
+      .where('poll.randomURL', req.params.id)
+      .returning('id')
+      .then((poll_id) => {
+        knex('response')
+          .where('poll_id', poll_id[0].id)
+          .andWhere('id', Number(req.params.response))
+          .del().then(function(){
+            console.log('attempting delete')
+          });
+      });
+  });
 
 
 
