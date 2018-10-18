@@ -42,7 +42,7 @@ module.exports = (knex) => {
       pollID = templateVars.poll['id'];
 
       if (req.session.email !== templateVars.poll.creator_email) {
-        res.send(404);
+        return res.sendStatus(404);
         // res.redirect('/error');
       }
       // once the correct poll is identified it is passed into the variables object
@@ -55,7 +55,7 @@ module.exports = (knex) => {
       }).then(function() {
 
         // ejs uses the variables to render the page
-        res.render("../views/admin.ejs", templateVars);
+        return res.render("../views/admin.ejs", templateVars);
       })
     })
   });
