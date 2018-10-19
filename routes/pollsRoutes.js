@@ -16,6 +16,7 @@ function generateRandomString(numberOfChars) {
 }
 
 module.exports = (knex) => {
+<<<<<<< HEAD
 	const computeBorda = (req) => {
 		const sum = {};
 		knex("poll")
@@ -144,6 +145,24 @@ module.exports = (knex) => {
 		// })
 	});
 
+  router.get("/:id/admin", (req, res) => {
+    let templateVars = {};
+    knex
+      .select('*')
+      .from('poll')
+      .where('poll.randomURL', req.params.id)
+      .then((response) => {
+        templateVars.poll = response[0];
+        console.log(req.session.email);
+        console.log(response[0].creator_email);
+        if (req.session.email === response[0].creator_email) {
+          res.render('../views/admin.ejs', templateVars);
+        } else {
+          res.redirect(`/polls/${req.params.id}/votes`);
+        }
+      });
+
+  });
 
 	// Endpoint for displaying the current votes status
 	router.get("/:id/votes", (req, res) => {
