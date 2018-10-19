@@ -16,7 +16,6 @@ function generateRandomString(numberOfChars) {
 }
 
 module.exports = (knex) => {
-<<<<<<< HEAD
 	const computeBorda = (req) => {
 		const sum = {};
 		knex("poll")
@@ -61,6 +60,7 @@ module.exports = (knex) => {
 			creator_email: receivedData.email,
 			date_created: new Date(),
 			randomURL: uniqueURL,
+
       end_date: receivedData.end,
       creator_name: receivedData.name};
 
@@ -142,7 +142,6 @@ module.exports = (knex) => {
 					console.log("emailed");
 				});
 			});
-		// })
 	});
 
   router.get("/:id/admin", (req, res) => {
