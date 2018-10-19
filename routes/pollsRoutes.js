@@ -16,7 +16,7 @@ function generateRandomString(numberOfChars) {
 }
 
 module.exports = (knex) => {
-  const computeBorda = () => {
+  const computeBorda = (req) => {
     const sum = {};
     knex('poll')
       .join('response', 'poll.id','=', 'response.poll_id')
@@ -116,22 +116,32 @@ module.exports = (knex) => {
           borda: options.length - i
         })
         .then(function() {
-          console.log('updated borda')
+          console.log('updated borda');
         });
-      };
-    });
-    insertBorda.then(function() {
-      const data = {
-        from: 'Excited User <me@samples.mailgun.org>',
-        // to:
-        subject: 'Someone has voted on your poll',
-        text: `A user has voted on your poll! Check it out at http://localhost/polls/${req.params.id}/votes`
-      };
-      // mailgun.messages().send(data, function (error, body) {
-      //   console.log('emailed');
-      // });
-      computeBorda();
-    })
+        }
+      });
+    insertBorda;
+
+    // .then(function() {
+      computeBorda(req);
+      console.log(req.params.id);
+      knex('poll')
+        .where('randomURL', req.params.id)
+        .select('creator_email')
+        .then(response => {
+          console.log(response);
+          const data = {
+            from: 'Excited User <me@samples.mailgun.org>',
+            to: response[0].creator_email;
+            subject: 'Someone has voted on your poll',
+            text: `A user has voted on your poll! Check it out at http://localhost/polls/${req.params.id}/votes.
+              Use your email and name to log into admin access.`
+          };
+          mailgun.messages().send(data, function (error, body) {
+            console.log('emailed');
+          });
+        })
+    // })
   });
 
 

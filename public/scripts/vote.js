@@ -2,7 +2,7 @@ $(() => {
   $('#submitOrder').click(function (event) {
     event.preventDefault();
     const order = []
-    const id = $('#submitOrder').attr('rurl');
+    const id = $('#submitOrder').attr('url');
     Array.from($('#sortable')
       .children('.sortableContainer'))
       .forEach((child) => {
