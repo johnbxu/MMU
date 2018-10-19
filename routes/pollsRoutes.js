@@ -35,7 +35,11 @@ module.exports = (knex) => {
 						.where("id", Number(id))
 						.update("borda", sum[id])
 						.then(function(){
+<<<<<<< Updated upstream
 							console.log("borda computed");
+=======
+							console.log("updated");
+>>>>>>> Stashed changes
 						});
 				}
 			});
@@ -60,10 +64,17 @@ module.exports = (knex) => {
 			creator_email: receivedData.email,
 			date_created: new Date(),
 			randomURL: uniqueURL,
+<<<<<<< Updated upstream
       end_date: receivedData.end,
       creator_name: receivedData.name};
 
 		// by default this router expects to receive all the options as JSON
+=======
+			end_date: receivedData.end};
+
+		// by default this router expects to receive all the options
+		// in a JSON.stringify string
+>>>>>>> Stashed changes
 		let receivedOptions = receivedData.options;
 
 		// next we insert the new question as a new instance of the poll table
@@ -75,7 +86,11 @@ module.exports = (knex) => {
 			// using the received pollid we can parse an array of objects
 			// which knex can insert into the response table
 			return receivedOptions.map(element => {
+<<<<<<< Updated upstream
 				return {poll_id: pollID, response_text: element.response, description: element.description,borda: 0};
+=======
+				return {poll_id: pollID, response_text: element, borda: 0};
+>>>>>>> Stashed changes
 			});
 		}).then((result) => {
 			knex.table("response").insert(result).then(function(){
@@ -94,7 +109,11 @@ module.exports = (knex) => {
 			.then(function(response) {
 				if (req.session.email === response[0].creator_email) {
 					knex("poll").where("randomURL", req.params.id).del().then(function(){
+<<<<<<< Updated upstream
 						console.log("poll deleted");
+=======
+						console.log("deleted");
+>>>>>>> Stashed changes
 					});
 				} else {
 					res.redirect("/error");
@@ -120,6 +139,7 @@ module.exports = (knex) => {
 					});
 			}
 		});
+<<<<<<< Updated upstream
 		insertBorda;
 
 		// .then(function() {
@@ -142,6 +162,20 @@ module.exports = (knex) => {
 				});
 			});
 		// })
+=======
+		insertBorda.then(function() {
+			const data = {
+				from: "Excited User <me@samples.mailgun.org>",
+				// to:
+				subject: "Someone has voted on your poll",
+				text: `A user has voted on your poll! Check it out at http://localhost/polls/${req.params.id}/votes`
+			};
+			// mailgun.messages().send(data, function (error, body) {
+			//   console.log('emailed');
+			// });
+			computeBorda();
+		});
+>>>>>>> Stashed changes
 	});
 
 
@@ -159,6 +193,10 @@ module.exports = (knex) => {
 				templateVars.owner = false;
 				if (req.session.email === table[0].creator_email) {
 					templateVars.owner = true;
+<<<<<<< Updated upstream
+=======
+					console.log(templateVars.owner);
+>>>>>>> Stashed changes
 				}
 				templateVars.responses = table;
 				res.render("../views/vote_finished.ejs", templateVars);
