@@ -11,6 +11,7 @@ $(() => {
 				order.push(Number(child.id));
 			});
 		
+		console.log("vote");
 		$.ajax({
 			url: `/polls/${id}`,
 			method: "PUT",

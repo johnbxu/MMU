@@ -122,27 +122,30 @@ module.exports = (knex) => {
 
 	// Endpoint for submitting the vote. Redir to /polls/:id/votes on success
 	// Logic is: find poll using randomURL; find responses using poll_id; find votes using
-	//  response_id; loop through votes and responses and if reponse_id === id, increment
+	// response_id; loop through votes and responses and if reponse_id === id, increment
 	router.put("/:id", (req, res) => {
 		const options = req.body.obj;
 		const voterName = req.body.voterName;
 
+		// we save the vote
+		for (let i = 0; i < options.length; i++) {
+			knex("vote").insert({"response_id": options[i], "bordaValue": options.length - i}).then(()=>{
+				console.log("inserting into vote table response_id", options[i], "bordaValue", options.length);
+			})
+		}
 		const insertBorda = new Promise(function(resolve, reject) {
 			for (let i = 0; i < options.length; i++) {
 				knex("response")
-				// id here is response id
 					.where("id", options[i])
-					.update({
-						borda: options.length - i
-					})
-					.then(function() {
-						console.log("updated borda");
-					});
+					.update({ borda: options.length - i })
+					.then(() => { console.log("updated borda") });
 			}
 		});
+
 		insertBorda;
+
 		computeBorda(req);
-		console.log("params.id",req.params.id);
+
 		knex("poll")
 			.where("randomURL", req.params.id)
 			.select("creator_email")
