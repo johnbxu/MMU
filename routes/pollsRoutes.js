@@ -62,8 +62,8 @@ module.exports = (knex) => {
 			date_created: new Date(),
 			randomURL: uniqueURL,
 
-      end_date: receivedData.end,
-      creator_name: receivedData.name};
+			end_date: receivedData.end,
+			creator_name: receivedData.name};
 
 		// by default this router expects to receive all the options as JSON
 		let receivedOptions = receivedData.options;
@@ -145,28 +145,27 @@ module.exports = (knex) => {
 				});
 			});
 
-			computeBorda();
-		});
+		computeBorda();
 	});
 
-  router.get("/:id/admin", (req, res) => {
-    let templateVars = {};
-    knex
-      .select('*')
-      .from('poll')
-      .where('poll.randomURL', req.params.id)
-      .then((response) => {
-        templateVars.poll = response[0];
-        console.log(req.session.email);
-        console.log(response[0].creator_email);
-        if (req.session.email === response[0].creator_email) {
-          res.render('../views/admin.ejs', templateVars);
-        } else {
-          res.redirect(`/polls/${req.params.id}/votes`);
-        }
-      });
+	router.get("/:id/admin", (req, res) => {
+		let templateVars = {};
+		knex
+			.select("*")
+			.from("poll")
+			.where("poll.randomURL", req.params.id)
+			.then((response) => {
+				templateVars.poll = response[0];
+				console.log(req.session.email);
+				console.log(response[0].creator_email);
+				if (req.session.email === response[0].creator_email) {
+					res.render("../views/admin.ejs", templateVars);
+				} else {
+					res.redirect(`/polls/${req.params.id}/votes`);
+				}
+			});
 
-  });
+	});
 
 	// Endpoint for displaying the current votes status
 	router.get("/:id/votes", (req, res) => {
