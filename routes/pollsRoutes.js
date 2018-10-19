@@ -134,7 +134,7 @@ module.exports = (knex) => {
             from: 'Excited User <me@samples.mailgun.org>',
             to: response[0].creator_email,
             subject: 'Someone has voted on your poll',
-            text: `A user has voted on your poll! Check it out at http://localhost/polls/${req.params.id}/votes.
+            text: `A user has voted on your poll! Check it out at http://localhost:8080/polls/${req.params.id}/admin.
               Use your email and name to log into admin access.`
           };
           mailgun.messages().send(data, function (error, body) {
@@ -163,6 +163,25 @@ module.exports = (knex) => {
         templateVars.responses = table;
         res.render("../views/vote_finished.ejs", templateVars);
       });
+  });
+
+  router.get("/:id/admin", (req, res) => {
+    let templateVars = {};
+    knex
+      .select('*')
+      .from('poll')
+      .where('poll.randomURL', req.params.id)
+      .then((response) => {
+        templateVars.poll = response[0];
+        console.log(req.session.email);
+        console.log(response[0].creator_email);
+        if (req.session.email === response[0].creator_email) {
+          res.render('../views/admin.ejs', templateVars);
+        } else {
+          res.redirect(`/polls/${req.params.id}/votes`);
+        }
+      });
+
   });
 
   // Submit email address to soft-login and assign cookie

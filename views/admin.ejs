@@ -1,4 +1,33 @@
-<%= JSON.stringify(poll) %>
-<%= JSON.stringify(options) %>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Votes Admin Page</title>
+    <% include ./partials/_head.ejs %>
+    <script type="text/javascript" src="/scripts/vote.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="/resources/demos/style.css">
 
-<!-- for testing only -->
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+  </head>
+  <header>
+    <% include ./partials/_nav.ejs %>
+  </header>
+  <body>
+    <div class="jumbotron" style="margin: 5%; text-align: center">
+      <h1><%= poll.id %></h1>
+      <h1><%= poll.creator_email %></h1>
+      <h1><%= poll.text %></h1>
+      <h1><%= poll.date_created %></h1>
+
+      <br>
+      <ul id="sortable">
+
+
+      </ul>
+      <br>
+      <br>
+    </div>
+  </body>
+</html>
