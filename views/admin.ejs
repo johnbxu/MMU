@@ -7,7 +7,7 @@
   <header>
     <% include ./partials/_nav.ejs %>
     <script type="text/javascript" src="/scripts/newFields.js"></script>
-    <script type="text/javascript" src="/scripts/postNew.js"></script>
+    <script type="text/javascript" src="/scripts/updatePoll.js"></script>
   </header>
 
   <body>
@@ -24,7 +24,8 @@
 
     <% } else { %>
 
-      <h2><%= responses[0].text %></h2>
+      <h2>Poll Admin Page</h2>
+      <p>Your question was: <strong><%= responses[0].text %></strong></p>
       <form id="newPoll" action="/polls/new" method="post" style="display:flex; padding: 5rem">
 
         <div style="text-align: left">
@@ -52,11 +53,12 @@
             </div>
             <div id="responses" class="options form-group">
               <label>Your selection of responses:</label><span> (You can also add optional descriptions)</span>
+              <% let count = 1 %>
               <% responses.forEach((response) => { %>
                 <div class="option" style="display:flex; flex-direction:row">
                   <input type="text" class="form-group form-control" id="option<%= response.id %>" value="<%= response.response_text %>" style="margin-right:2rem" required>
-                  <input type="text" class="description form-group form-control" id="description<%= response.id %>" value="<%= response.description %>">
-                  <span><button action="/polls/<%= response.randomURL %>/<%= response.response_id %>">Delete</button></span>
+                  <input type="text" class="description form-group form-control" id="description<%= response.id %>" value="<%= response.description %>" style="margin-right:2rem">
+                  <span><button class="btn btn-sm btn-danger" action="/polls/<%= response.randomURL %>/<%= response.response_id %> method="delete">Delete</button></span>
                 </div>
               <% }) %>
             </div>

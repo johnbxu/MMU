@@ -73,7 +73,7 @@ module.exports = (knex) => {
 		let pollID;
 		knex.table("poll").insert(newPoll).returning("id").then(id => {
 			pollID = id[0];
-      res.clearCookie("session");
+			res.clearCookie("session");
 		}).then(function() {
 			// using the received pollid we can parse an array of objects
 			// which knex can insert into the response table
@@ -101,7 +101,7 @@ module.exports = (knex) => {
 						console.log("poll deleted");
 					});
 				} else {
-          let templateVars = {errorCode: 500, errorMessage: "Unauthorized"}
+					let templateVars = {errorCode: 500, errorMessage: "Unauthorized"};
 					res.render("./error.ejs", templateVars);
 				}
 			});
@@ -144,27 +144,27 @@ module.exports = (knex) => {
 				};
 				mailgun.messages().send(data, function (error, body) {
 					console.log("emailed");
-					res.json({pollID: "test", creator_name: "name"})
+					res.json({pollID: "test", creator_name: "name"});
 				});
-			})
+			});
 	});
 
 	router.get("/:id/admin", (req, res) => {
 		let templateVars = {};
-    knex("poll")
-      .join("response", "poll.id","=", "response.poll_id")
-      .select("*")
-      .where("poll.randomURL", req.params.id)
-      .orderBy("borda")
-      .then(function(table) {
-        templateVars.responses = table;
-        if (req.session.email === table[0].creator_email) {
-          templateVars.loggedIn = true;
-        } else {
-          templateVars.loggedIn = false;
-        }
+		knex("poll")
+			.join("response", "poll.id","=", "response.poll_id")
+			.select("*")
+			.where("poll.randomURL", req.params.id)
+			.orderBy("borda")
+			.then(function(table) {
+				templateVars.responses = table;
+				if (req.session.email === table[0].creator_email) {
+					templateVars.loggedIn = true;
+				} else {
+					templateVars.loggedIn = false;
+				}
 				res.render("../views/admin.ejs", templateVars);
-      });
+			});
 	});
 
 	// Endpoint for displaying the current votes status
@@ -185,8 +185,8 @@ module.exports = (knex) => {
 
 	// Submit email address to soft-login and assign cookie
 	router.put("/:id/login", (req, res) => {
-    res.clearCookie("session");
-    console.log(req.body.email);
+		res.clearCookie("session");
+		console.log(req.body.email);
 		knex
 			.select("*")
 			.from("poll")
@@ -194,11 +194,11 @@ module.exports = (knex) => {
 			.then((response) => {
 				if (req.body.email === response[0].creator_email) {
 					req.session.email = req.body.email;
-          res.redirect(`/polls/${req.params.id}/admin`);
+					res.redirect(`/polls/${req.params.id}/admin`);
 				} else {
-          let templateVars = {errorCode: 500, errorMessage: "Unauthorized"}
+					let templateVars = {errorCode: 500, errorMessage: "Unauthorized"};
 					res.render("./error.ejs", templateVars);
-        }
+				}
 			});
 	});
 
@@ -217,12 +217,12 @@ module.exports = (knex) => {
 						.del()
 						.then(function(){
 							console.log("attempting delete");
-              res.redirect(`/polls/${req.params.id}/votes`)
+							res.redirect(`/polls/${req.params.id}/admin`);
 						});
 				} else {
-          let templateVars = {errorCode: 500, errorMessage: "Unauthorized"}
+					let templateVars = {errorCode: 500, errorMessage: "Unauthorized"};
 					res.render("./error.ejs", templateVars);
-        }
+				}
 			});
 	});
 
@@ -246,9 +246,9 @@ module.exports = (knex) => {
 							res.redirect(`/polls/${req.params.id}/votes`);
 						});
 				} else {
-          let templateVars = {errorCode: 500, errorMessage: "Unauthorized"}
+					let templateVars = {errorCode: 500, errorMessage: "Unauthorized"};
 					res.render("./error.ejs", templateVars);
-        }
+				}
 			});
 	});
 
@@ -256,13 +256,13 @@ module.exports = (knex) => {
 	router.get("/:id/thanks", (req, res) => {
 		let templateVars = {};
 		knex
-				.select("*")
-				.from("poll")
-				.where("poll.randomURL", req.params.id)
-				.then((result) => {
-					templateVars.creator_name = result[0].creator_name;
-					res.render("thank_you", templateVars);
-				});
+			.select("*")
+			.from("poll")
+			.where("poll.randomURL", req.params.id)
+			.then((result) => {
+				templateVars.creator_name = result[0].creator_name;
+				res.render("thank_you", templateVars);
+			});
 	});
 
 	return router;
