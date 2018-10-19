@@ -26,6 +26,11 @@
 
       <h2>Poll Admin Page</h2>
       <p>Your question was: <strong><%= responses[0].text %></strong></p>
+
+      <div style="background-color: white; text-align: center; margin:0 30% 0; padding: 2rem; border-radius: 1rem">
+        <p>Participant Link: <a href="/polls/<%= responses[0].randomURL %>/votes">www.myawesomefakedomain.com/polls/<%= responses[0].randomURL %>/votes</a></p>
+        <p>Administration Link: <a href="/polls/<%= responses[0].randomURL %>/admin">www.myawesomefakedomain.com/polls/<%= responses[0].randomURL %>/admin</a></p>
+      </div>
       <form id="newPoll" action="/polls/new" method="post" style="display:flex; padding: 5rem">
 
         <div style="text-align: left">
