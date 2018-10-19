@@ -15,7 +15,7 @@ $(() => {
 			tempObj["description"] = temporaryInputArray[i+1];
 			formVariables.options.push(tempObj);
 		}
-    
+
 		formVariables.question = $("#question").val();
 		formVariables.name = $("#name").val();
 		formVariables.email = $("#email").val();
