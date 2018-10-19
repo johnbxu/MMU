@@ -13,33 +13,40 @@
   <body>
     <div class="jumbotron" style="margin:5%; text-align: center; display:flex; flex-direction:column">
       <h2>New Poll</h2>
-      <p>Please provide a question and at least 2 answers. Your e-mail and name are needed to create a poll.</p>
+      <p>Please provide a question and at least 2 answers. 
+        Fields marked with an asterisk (*) are required to create a poll.</p>
       <form id="newPoll" action="/polls/new" method="post" style="display:flex; padding: 5rem">
         
         <div style="text-align: left">
           <div class="form-group">
-            <label for="email">Email:</label>
+            <label for="email">Email*:</label>
             <input type="email" class="form-control" id="email" required>
           </div>
           <div class="form-group">
-            <label for="name">Your Name:</label>
+            <label for="name">Your Name*:</label>
             <input type="text" class="form-control" id="name" required>
           </div>
           <div class="form-group">
-            <label for="end">When should this poll end?</label>
+            <label for="end">When should this poll end?*</label>
             <input type="date" class="form-control" id="end" required>
           </div>
         </div>
         <div style="text-align: left; margin-left: 10rem;flex-grow: 2"">
           <div style="flex-direction: column">
             <div class="form-group">
-              <label for="question">What is the question you want to ask?</label>
+              <label for="question">What is the question you want to ask?*</label>
               <input type="text" class="form-control" id="question" required>
             </div>
             <div id="responses" class="options form-group">
-              <label>Your selection of responses:</label>
-              <input type="text" class="option form-group form-control" id="option1" required>
-              <input type="text" class="option form-group form-control" id="option2" required>
+              <label>Your selection of responses:</label><span> (You can also add optional descriptions)</span>
+              <div class="option" style="display:flex; flex-direction:row">
+                <input type="text" class="form-group form-control" id="option1" placeholder="Your response here*" style="margin-right:2rem" required>
+                <input type="text" class="description form-group form-control" id="description1" placeholder="Optional description">
+              </div>
+              <div class="option" style="display:flex; flex-direction:row">
+                <input type="text" class="form-group form-control" id="option2" placeholder="Your response here*" style="margin-right:2rem" required>
+                <input type="text" class="description form-group form-control" id="description2" placeholder="Optional description">
+              </div>
             </div>
           <div style="display: flex; justify-content: space-between">
             <div>
