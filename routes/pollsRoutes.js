@@ -121,6 +121,15 @@ module.exports = (knex) => {
       };
     });
     insertBorda.then(function() {
+      const data = {
+        from: 'Excited User <me@samples.mailgun.org>',
+        // to:
+        subject: 'Someone has voted on your poll',
+        text: `A user has voted on your poll! Check it out at http://localhost/polls/${req.params.id}/votes`
+      };
+      // mailgun.messages().send(data, function (error, body) {
+      //   console.log('emailed');
+      // });
       computeBorda();
     })
   });
@@ -148,12 +157,6 @@ module.exports = (knex) => {
   });
 
   // Submit email address to soft-login and assign cookie
-  router.put("/:id/votes", (req, res) => {
-    // req.session.email = req.body.email;
-    // add cookie
-    res.redirect(`/${req.params.id}/votes`);
-  });
-
   router.put("/:id/login", (req, res) => {
     knex
       .select('*')
