@@ -1,33 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Votes Admin Page</title>
+    <title>Poll Admin</title>
     <% include ./partials/_head.ejs %>
-    <script type="text/javascript" src="/scripts/vote.js"></script>
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <link rel="stylesheet" href="/resources/demos/style.css">
-
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
   </head>
   <header>
     <% include ./partials/_nav.ejs %>
+    <script type="text/javascript" src="/scripts/newFields.js"></script>
+    <script type="text/javascript" src="/scripts/postNew.js"></script>
   </header>
+
   <body>
-    <div class="jumbotron" style="margin: 5%; text-align: center">
-      <h1><%= poll.id %></h1>
-      <h1><%= poll.creator_email %></h1>
-      <h1><%= poll.text %></h1>
-      <h1><%= poll.date_created %></h1>
+    <div class="jumbotron" style="margin:5%; text-align: center; display:flex; flex-direction:column">
+    <% if (!loggedIn) { %>
+      <form class="form-signin" action="/polls/<%= responses[0].randomURL %>/login?_method=PUT" method="POST">
+        <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+        <label for="inputEmail" class="sr-only">Email address</label>
+        <input type="email" id="inputEmail" class="form-control" name="email" placeholder="Email address" required autofocus>
+        <label for="inputName" class="sr-only">Name</label>
+        <input type="text" id="inputName" class="form-control" name="name" placeholder="Name" required>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" id="signIn">Sign in</button>
+      </form>
 
-      <br>
-      <ul id="sortable">
+    <% } else { %>
 
+      <h2><%= responses[0].text %></h2>
+      <form id="newPoll" action="/polls/new" method="post" style="display:flex; padding: 5rem">
 
-      </ul>
-      <br>
-      <br>
+        <div style="text-align: left">
+          <div class="form-group">
+            <label for="email">Creator email:</label>
+            <input type="email" class="form-control" id="email" value="<%= responses[0].creator_email %>" required>
+          </div>
+          <div class="form-group">
+            <label for="name">Your Name*:</label>
+            <input type="text" class="form-control" id="name" value="<%= responses[0].creator_name %>" required>
+          </div>
+          <div class="form-group">
+            <label for="end">When should this poll end?*</label>
+
+            <% console.log(Date(responses[0].date_created)) %>
+            <% console.log(responses[0].date_created.toISOString().substring(0,10)) %>
+            <input type="date" class="form-control" id="end" value="<%= responses[0].date_created.toISOString().substring(0,10) %>" required>
+          </div>
+        </div>
+        <div style="text-align: left; margin-left: 10rem;flex-grow: 2">
+          <div style="flex-direction: column">
+            <div class="form-group">
+              <label for="question">What would you like to change the question to?*</label>
+              <input type="text" class="form-control" id="question" value="<%= responses[0].text %>"required>
+            </div>
+            <div id="responses" class="options form-group">
+              <label>Your selection of responses:</label><span> (You can also add optional descriptions)</span>
+              <% responses.forEach((response) => { %>
+                <div class="option" style="display:flex; flex-direction:row">
+                  <input type="text" class="form-group form-control" id="option<%= response.id %>" value="<%= response.response_text %>" style="margin-right:2rem" required>
+                  <input type="text" class="description form-group form-control" id="description<%= response.id %>" value="<%= response.description %>">
+                  <span><button action="/polls/<%= response.randomURL %>/<%= response.response_id %>">Delete</button></span>
+                </div>
+              <% }) %>
+            </div>
+          <div style="display: flex; justify-content: space-between">
+            <div>
+              <button type="button" id="newOption" class="btn btn-info">&#x002B; Add Row</button>
+              <button type="button" id="deleteOption" class="btn btn-info">- Delete Row</button>
+            </div>
+            <button type="submit" id="submitNewPoll" form="newPoll" class="btn btn-primary" action="/polls/new" method="POST">Submit</button>
+          </div>
+        </div>
+      </form>
+    <% } %>
     </div>
   </body>
 </html>

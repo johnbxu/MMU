@@ -73,6 +73,7 @@ module.exports = (knex) => {
 		let pollID;
 		knex.table("poll").insert(newPoll).returning("id").then(id => {
 			pollID = id[0];
+      res.clearCookie("session");
 		}).then(function() {
 			// using the received pollid we can parse an array of objects
 			// which knex can insert into the response table
@@ -82,15 +83,15 @@ module.exports = (knex) => {
 			});
 		}).then((result) => {
 			knex.table("response").insert(result).then(function(){
-				res.clearCookie("session");
 				req.session.email = receivedData.email;
-				res.status(200).json({url: `/polls/${uniqueURL}/votes`});
+				res.status(200).json({url: `/polls/${uniqueURL}/admin`});
 			});
 		});
 	});
 
 	// This searches for and deletes a poll
 	router.delete("/:id", (req, res) => {
+
 		knex("poll")
 			.select("*")
 			.where("randomURL", req.params.id)
@@ -100,7 +101,8 @@ module.exports = (knex) => {
 						console.log("poll deleted");
 					});
 				} else {
-					res.redirect("/error");
+          let templateVars = {errorCode: 500, errorMessage: "Unauthorized"}
+					res.render("./error.ejs", templateVars);
 				}
 			});
 	});
@@ -126,8 +128,6 @@ module.exports = (knex) => {
 			}
 		});
 		insertBorda;
-
-		// .then(function() {
 		computeBorda(req);
 		console.log("params.id",req.params.id);
 		knex("poll")
@@ -150,21 +150,20 @@ module.exports = (knex) => {
 
 	router.get("/:id/admin", (req, res) => {
 		let templateVars = {};
-		knex
-			.select("*")
-			.from("poll")
-			.where("poll.randomURL", req.params.id)
-			.then((response) => {
-				templateVars.poll = response[0];
-				console.log(req.session.email);
-				console.log(response[0].creator_email);
-				if (req.session.email === response[0].creator_email) {
-					res.render("../views/admin.ejs", templateVars);
-				} else {
-					res.redirect(`/polls/${req.params.id}/votes`);
-				}
-			});
-
+    knex("poll")
+      .join("response", "poll.id","=", "response.poll_id")
+      .select("*")
+      .where("poll.randomURL", req.params.id)
+      .orderBy("borda")
+      .then(function(table) {
+        templateVars.responses = table;
+        if (req.session.email === table[0].creator_email) {
+          templateVars.loggedIn = true;
+        } else {
+          templateVars.loggedIn = false;
+        }
+				res.render("../views/admin.ejs", templateVars);
+      });
 	});
 
 	// Endpoint for displaying the current votes status
@@ -185,16 +184,20 @@ module.exports = (knex) => {
 
 	// Submit email address to soft-login and assign cookie
 	router.put("/:id/login", (req, res) => {
+    res.clearCookie("session");
+    console.log(req.body.email);
 		knex
 			.select("*")
 			.from("poll")
 			.where("poll.randomURL", req.params.id)
 			.then((response) => {
 				if (req.body.email === response[0].creator_email) {
-					res.clearCookie("session");
 					req.session.email = req.body.email;
-					res.status(200).json({url: `/polls/${uniqueURL}/votes`});
-				}
+          res.redirect(`/polls/${req.params.id}/admin`);
+				} else {
+          let templateVars = {errorCode: 500, errorMessage: "Unauthorized"}
+					res.render("./error.ejs", templateVars);
+        }
 			});
 	});
 
@@ -213,8 +216,12 @@ module.exports = (knex) => {
 						.del()
 						.then(function(){
 							console.log("attempting delete");
+              res.redirect(`/polls/${req.params.id}/votes`)
 						});
-				}
+				} else {
+          let templateVars = {errorCode: 500, errorMessage: "Unauthorized"}
+					res.render("./error.ejs", templateVars);
+        }
 			});
 	});
 
@@ -237,7 +244,10 @@ module.exports = (knex) => {
 							console.log("attempting update");
 							res.redirect(`/polls/${req.params.id}/votes`);
 						});
-				}
+				} else {
+          let templateVars = {errorCode: 500, errorMessage: "Unauthorized"}
+					res.render("./error.ejs", templateVars);
+        }
 			});
 	});
 
