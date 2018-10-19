@@ -110,10 +110,12 @@ module.exports = (knex) => {
 	//  response_id; loop through votes and responses and if reponse_id === id, increment
 	router.put("/:id", (req, res) => {
 		const options = req.body.obj;
-		const borda = {};
+		const voterName = req.body.voterName;
+
 		const insertBorda = new Promise(function(resolve, reject) {
 			for (let i = 0; i < options.length; i++) {
 				knex("response")
+				// id here is response id
 					.where("id", options[i])
 					.update({
 						borda: options.length - i
@@ -127,25 +129,23 @@ module.exports = (knex) => {
 
 		// .then(function() {
 		computeBorda(req);
-		console.log(req.params.id);
+		console.log("params.id",req.params.id);
 		knex("poll")
 			.where("randomURL", req.params.id)
 			.select("creator_email")
 			.then(response => {
-				console.log(response);
+				console.log("response from poll knex",response);
 				const data = {
-					from: "Excited User <me@samples.mailgun.org>",
+					from: "Mind Maker Upper <me@samples.mailgun.org>",
 					to: response[0].creator_email,
-					subject: "Someone has voted on your poll",
-					text: `A user has voted on your poll! Check it out at http://localhost/polls/${req.params.id}/votes.
+					subject: `${voterName} has voted on your poll`,
+					text: `${voterName} has voted on your poll! Check it out at http://localhost/polls/${req.params.id}/votes.
               Use your email and name to log into admin access.`
 				};
 				mailgun.messages().send(data, function (error, body) {
 					console.log("emailed");
 				});
 			});
-
-		computeBorda();
 	});
 
 	router.get("/:id/admin", (req, res) => {
@@ -170,21 +170,16 @@ module.exports = (knex) => {
 	// Endpoint for displaying the current votes status
 	router.get("/:id/votes", (req, res) => {
 		let templateVars = {};
-		let pollId;
 
 		knex("poll")
-			.join("response", "poll.id","=", "response.poll_id")
+			.join("response", "poll.id", "=", "response.poll_id")
 			.select("*")
 			.where("poll.randomURL", req.params.id)
 			.orderBy("borda")
 			.then(function(table) {
-				templateVars.owner = false;
-				if (req.session.email === table[0].creator_email) {
-					templateVars.owner = true;
-					console.log(templateVars.owner);
-				}
 				templateVars.responses = table;
-				res.render("../views/vote_finished.ejs", templateVars);
+				console.log("logging table",table);
+				res.render("../views/vote.ejs", templateVars);
 			});
 	});
 
