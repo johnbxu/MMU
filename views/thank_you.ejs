@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Thanks!</title>
+    <% include ./partials/_head.ejs %>
+  </head>
+  <header>
+    <% include ./partials/_nav.ejs %>
+  </header>
+
+  <body>
+    <div class="jumbotron" style="margin: 5%; text-align: center">
+      <h2>Thanks for voting!</h2><br>
+      <p>Your vote has been submitted.</p>
+      <p><%= creator_name %> will receive an e-mail letting them know</p>
+      <p>Go ahead, make your own poll! Just click the button in the top right corner!</p>
+    </div>
+  </body>
+</html>

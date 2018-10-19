@@ -10,13 +10,19 @@ $(() => {
 			.forEach((child) => {
 				order.push(Number(child.id));
 			});
+		
+		console.log(order);
 		$.ajax({
 			url: `/polls/${id}`,
 			method: "PUT",
 			data: {
 				obj: order,
 				voterName: voter },
-			dataType: "json"
+			dataType: "json",
+			success: function(response) {
+				console.log(response);
+				window.location.href = `/polls/${id}/thanks`;
+			}
 		});
 	});
 });

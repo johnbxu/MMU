@@ -139,13 +139,14 @@ module.exports = (knex) => {
 					from: "Mind Maker Upper <me@samples.mailgun.org>",
 					to: response[0].creator_email,
 					subject: `${voterName} has voted on your poll`,
-					text: `${voterName} has voted on your poll! Check it out at http://localhost/polls/${req.params.id}/votes.
+					text: `${voterName} has voted on your poll! Check it out at http://localhost:8080/polls/${req.params.id}/admin.
               Use your email and name to log into admin access.`
 				};
 				mailgun.messages().send(data, function (error, body) {
 					console.log("emailed");
+					res.json({pollID: "test", creator_name: "name"})
 				});
-			});
+			})
 	});
 
 	router.get("/:id/admin", (req, res) => {
@@ -251,17 +252,18 @@ module.exports = (knex) => {
 			});
 	});
 
-	router.post("/test/email", (req, res) => {
-		const data = {
-			from: "Excited User <me@samples.mailgun.org>",
-			// to:
-			subject: "Hello",
-			text: "Testing some Mailgun awesomness!"
-		};
-		mailgun.messages().send(data, function (error, body) {
-			console.log("emailed");
-		});
-
+	// Endpoint for thank you page
+	router.get("/:id/thanks", (req, res) => {
+		let templateVars = {};
+		knex
+				.select("*")
+				.from("poll")
+				.where("poll.randomURL", req.params.id)
+				.then((result) => {
+					templateVars.creator_name = result[0].creator_name;
+					res.render("thank_you", templateVars);
+				});
 	});
+
 	return router;
 };
