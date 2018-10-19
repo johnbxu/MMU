@@ -154,6 +154,20 @@ module.exports = (knex) => {
     res.redirect(`/${req.params.id}/votes`);
   });
 
+  router.put("/:id/login", (req, res) => {
+    knex
+      .select('*')
+      .from('poll')
+      .where('poll.randomURL', req.params.id)
+      .then((response) => {
+        if (req.body.email === response[0].creator_email) {
+          res.clearCookie('session');
+          req.session.email = req.body.email;
+          res.status(200).json({url: `/polls/${uniqueURL}/votes`});
+        }
+      });
+  })
+
   // Searches for a poll based on randomURL and if owner, searches for specific
   //  response using id, then deletes
   router.delete("/:id/:response", (req, res) => {

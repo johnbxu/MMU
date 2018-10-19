@@ -33,6 +33,20 @@
   <body>
     <div class="jumbotron" style="margin: 5%; text-align: center">
       <h1><%= responses[0].text %></h1><br>
+      <% if (!owner) { %>
+        <form id="login">
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" class="form-control" id="email" required>
+          </div>
+          <div class="form-group">
+            <label for="name">Your Name:</label>
+            <input type="text" class="form-control" id="name" required>
+          </div>
+          <button action="/polls/<%= responses[0].randomURL %>/login" method="put">Login</button>
+        </form>
+      <% } %>
+
       <br>
       <ul id="sortable">
         <% if (!owner) { %>
