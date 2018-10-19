@@ -11,7 +11,6 @@ $(() => {
 				order.push(Number(child.id));
 			});
 		
-		console.log(order);
 		$.ajax({
 			url: `/polls/${id}`,
 			method: "PUT",
@@ -20,7 +19,7 @@ $(() => {
 				voterName: voter },
 			dataType: "json",
 			success: function(response) {
-				console.log(response);
+				console.log("Vote submitted. Received the following response: ",response);
 				window.location.href = `/polls/${id}/thanks`;
 			}
 		});
