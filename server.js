@@ -57,12 +57,6 @@ app.get("/", (req, res) => {
   res.render("index");
 });
 
-// Endpoint for thank you page
-app.get("/thanks", (req, res) => {
-  let templateVars = {pollID : req.body.pollID, creator_name : req.body.creator_name}
-  res.render("thank_you", templateVars);
-});
-
 // Endpoint for error page
 app.get("/error", (req, res) => {
   res.render("error");
