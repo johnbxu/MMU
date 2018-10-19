@@ -79,6 +79,7 @@ module.exports = (knex) => {
         });
       }).then((result) => {
         knex.table('response').insert(result).then(function(){
+          res.clearCookie('session');
           req.session.email = receivedData.email;
           res.status(200).json({url: `/polls/${uniqueURL}/votes`});
         })
@@ -101,27 +102,14 @@ module.exports = (knex) => {
       });
   });
 
-  // Endpoint for getting the voting page
-  // Queries DB for randomURL and outputs data associated with the row
-  router.get("/:id", (req, res) => {
-    let templateVars = {};
-    knex
-      .select('*')
-      .from('poll')
-      .where('randomURL', req.params.id)
-      .then(function(response) {
-        templateVars.poll = response[0];
-        res.render("../views/vote.ejs", templateVars);
-      });
-  });
-
   // Endpoint for submitting the vote. Redir to /polls/:id/votes on success
   // Logic is: find poll using randomURL; find responses using poll_id; find votes using
   //  response_id; loop through votes and responses and if reponse_id === id, increment
   router.put("/:id", (req, res) => {
     const options = req.body.obj;
     const borda = {};
-    for (let i = 0; i < options.length; i++) {
+    const insertBorda = new Promise(function(resolve, reject) {
+      for (let i = 0; i < options.length; i++) {
       knex('response')
         .where('id', options[i])
         .update({
@@ -130,21 +118,11 @@ module.exports = (knex) => {
         .then(function() {
           console.log('updated borda')
         });
-      // borda[options[i]] = options.length - i;
-    };
-    // console.log(borda);
-    // knex('poll')
-    //   .join('response', 'poll.id','=', 'response.poll_id')
-    //   .where('poll.randomURL', req.params.id)
-    //   .update({
-    //
-    //   })
-    //   .then(function(table) {
-    //     console.log(table);
-    //     templateVars.responses = table;
-    //     res.render("../views/vote_finished.ejs", templateVars);
-    //   });
-    computeBorda();
+      };
+    });
+    insertBorda.then(function() {
+      computeBorda();
+    })
   });
 
 
@@ -157,33 +135,16 @@ module.exports = (knex) => {
       .join('response', 'poll.id','=', 'response.poll_id')
       .select('*')
       .where('poll.randomURL', req.params.id)
+      .orderBy('borda')
       .then(function(table) {
+        templateVars.owner = false;
+        if (req.session.email === table[0].creator_email) {
+          templateVars.owner = true;
+          console.log(templateVars.owner);
+        }
         templateVars.responses = table;
         res.render("../views/vote_finished.ejs", templateVars);
       });
-    // once the correct poll is identified it is passed into the variables object
-    // the pollID variable is used to find the appropriate options for this poll
-    // knex
-    //   .select('*')
-    //   .from('poll')
-    //   .where('poll.randomURL', req.params.id)
-    //   .then(function(response) {
-    //     templateVars.poll = response[0];
-    //     pollId = templateVars.poll.id;
-    //   }).then(function() {
-    //     // the options for this poll are added to the variables object
-    //     knex
-    //       .select('*')
-    //       .from('response')
-    //       .where('poll_id', pollId)
-    //       .then(function(options) {
-    //         templateVars.options = options;
-    //         console.log(templateVars);
-    //         console.log(options);
-    //         // ejs uses the variables to render the page
-    //         res.render("../views/vote_finished.ejs", templateVars);
-    //       });
-    //   });
   });
 
   // Submit email address to soft-login and assign cookie

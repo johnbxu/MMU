@@ -35,11 +35,21 @@
       <h1><%= responses[0].text %></h1><br>
       <br>
       <ul id="sortable">
-        <% responses.forEach(response => { %>
-          <div class="sortableContainer" id="<%= response.id %>">
-            <li class="ui-state-default"><%= response.response_text %></li>
-          </div>
-        <% }) %>
+        <% if (!owner) { %>
+          <% responses.forEach(response => { %>
+            <div class="sortableContainer" id="<%= response.id %>">
+              <li class="ui-state-default"><%= response.response_text %></li>
+            </div>
+          <% }) %>
+        <% } else { %>
+          <% responses.forEach(response => { %>
+            <div class="sortableContainer" id="<%= response.id %>">
+              <li class="ui-state-default"><%= response.response_text %></li>
+              <span><button action="/polls/<%= responses[0].randomURL %>/delete">Delete</button></span>
+              <span><button action="/polls/<%= responses[0].randomURL %>/update">Update</button></span>
+            </div>
+          <% }) %>
+        <% } %>
       </ul>
       <br>
       <br>
