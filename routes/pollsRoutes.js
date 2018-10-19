@@ -36,7 +36,11 @@ module.exports = (knex) => {
 						.update("borda", sum[id])
 						.then(function(){
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 							console.log("borda computed");
+=======
+							console.log("updated");
+>>>>>>> Stashed changes
 =======
 							console.log("updated");
 >>>>>>> Stashed changes
@@ -65,15 +69,21 @@ module.exports = (knex) => {
 			date_created: new Date(),
 			randomURL: uniqueURL,
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       end_date: receivedData.end,
       creator_name: receivedData.name};
 
 		// by default this router expects to receive all the options as JSON
 =======
+=======
+>>>>>>> Stashed changes
 			end_date: receivedData.end};
 
 		// by default this router expects to receive all the options
 		// in a JSON.stringify string
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 		let receivedOptions = receivedData.options;
 
@@ -87,7 +97,11 @@ module.exports = (knex) => {
 			// which knex can insert into the response table
 			return receivedOptions.map(element => {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 				return {poll_id: pollID, response_text: element.response, description: element.description,borda: 0};
+=======
+				return {poll_id: pollID, response_text: element, borda: 0};
+>>>>>>> Stashed changes
 =======
 				return {poll_id: pollID, response_text: element, borda: 0};
 >>>>>>> Stashed changes
@@ -110,7 +124,11 @@ module.exports = (knex) => {
 				if (req.session.email === response[0].creator_email) {
 					knex("poll").where("randomURL", req.params.id).del().then(function(){
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 						console.log("poll deleted");
+=======
+						console.log("deleted");
+>>>>>>> Stashed changes
 =======
 						console.log("deleted");
 >>>>>>> Stashed changes
@@ -140,6 +158,7 @@ module.exports = (knex) => {
 			}
 		});
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 		insertBorda;
 
 		// .then(function() {
@@ -163,6 +182,8 @@ module.exports = (knex) => {
 			});
 		// })
 =======
+=======
+>>>>>>> Stashed changes
 		insertBorda.then(function() {
 			const data = {
 				from: "Excited User <me@samples.mailgun.org>",
@@ -175,6 +196,9 @@ module.exports = (knex) => {
 			// });
 			computeBorda();
 		});
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 	});
 
@@ -194,6 +218,10 @@ module.exports = (knex) => {
 				if (req.session.email === table[0].creator_email) {
 					templateVars.owner = true;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+					console.log(templateVars.owner);
+>>>>>>> Stashed changes
 =======
 					console.log(templateVars.owner);
 >>>>>>> Stashed changes
