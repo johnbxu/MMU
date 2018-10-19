@@ -35,7 +35,7 @@ module.exports = (knex) => {
             .where('id', Number(id))
             .update('borda', sum[id])
             .then(function(){
-              console.log('updated');
+              console.log('borda computed');
             })
         }
       });
@@ -94,7 +94,7 @@ module.exports = (knex) => {
       .then(function(response) {
           if (req.session.email === response[0].creator_email) {
             knex("poll").where("randomURL", req.params.id).del().then(function(){
-              console.log('deleted');
+              console.log('poll deleted');
             });
           } else {
             res.redirect("/error")
@@ -159,7 +159,6 @@ module.exports = (knex) => {
         templateVars.owner = false;
         if (req.session.email === table[0].creator_email) {
           templateVars.owner = true;
-          console.log(templateVars.owner);
         }
         templateVars.responses = table;
         res.render("../views/vote_finished.ejs", templateVars);
