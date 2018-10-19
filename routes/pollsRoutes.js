@@ -36,6 +36,7 @@ module.exports = (knex) => {
 						.update("borda", sum[id])
 						.then(function(){
 							console.log("borda computed");
+
 						});
 				}
 			});
@@ -77,6 +78,7 @@ module.exports = (knex) => {
 			// which knex can insert into the response table
 			return receivedOptions.map(element => {
 				return {poll_id: pollID, response_text: element.response, description: element.description,borda: 0};
+
 			});
 		}).then((result) => {
 			knex.table("response").insert(result).then(function(){
@@ -142,6 +144,9 @@ module.exports = (knex) => {
 					console.log("emailed");
 				});
 			});
+
+			computeBorda();
+		});
 	});
 
   router.get("/:id/admin", (req, res) => {
@@ -177,6 +182,7 @@ module.exports = (knex) => {
 				templateVars.owner = false;
 				if (req.session.email === table[0].creator_email) {
 					templateVars.owner = true;
+					console.log(templateVars.owner);
 				}
 				templateVars.responses = table;
 				res.render("../views/vote_finished.ejs", templateVars);
