@@ -27,7 +27,7 @@
       <h2>Poll Admin Page</h2>
       <p>Your question was: <strong><%= responses[0].text %></strong></p>
 
-      <div style="background-color: white; text-align: center; margin:0 30% 0; padding: 2rem; border-radius: 1rem">
+      <div style="background-color: white; text-align: center; padding: 2rem; border-radius: 1rem">
         <p>Participant Link: <a href="/polls/<%= responses[0].randomURL %>/votes">www.myawesomefakedomain.com/polls/<%= responses[0].randomURL %>/votes</a></p>
         <p>Administration Link: <a href="/polls/<%= responses[0].randomURL %>/admin">www.myawesomefakedomain.com/polls/<%= responses[0].randomURL %>/admin</a></p>
       </div>
@@ -44,9 +44,6 @@
           </div>
           <div class="form-group">
             <label for="end">When should this poll end?*</label>
-
-            <% console.log(Date(responses[0].date_created)) %>
-            <% console.log(responses[0].date_created.toISOString().substring(0,10)) %>
             <input type="date" class="form-control" id="end" value="<%= responses[0].date_created.toISOString().substring(0,10) %>" required>
           </div>
         </div>
@@ -72,7 +69,12 @@
               <button type="button" id="newOption" class="btn btn-info">&#x002B; Add Row</button>
               <button type="button" id="deleteOption" class="btn btn-info">- Delete Row</button>
             </div>
-            <button type="submit" id="submitNewPoll" form="newPoll" class="btn btn-primary" action="/polls/new" method="POST">Submit</button>
+            <div>
+              <button type="submit" id="endPoll" form="newPoll" class="btn btn-primary btn-secondary">End Poll Now</button>
+              <button type="submit" id="deletePoll" form="newPoll" class="btn btn-primary btn-danger">Delete Poll</button>
+              <button type="submit" id="updatePoll" form="newPoll" class="btn btn-primary" action="/polls/new" method="POST">Update Poll</button>
+            </div>
+            
           </div>
         </div>
       </form>

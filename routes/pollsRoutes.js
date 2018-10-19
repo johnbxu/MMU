@@ -36,7 +36,6 @@ module.exports = (knex) => {
 						.update("borda", sum[id])
 						.then(function(){
 							console.log("borda computed");
-
 						});
 				}
 			});
@@ -83,8 +82,22 @@ module.exports = (knex) => {
 			});
 		}).then((result) => {
 			knex.table("response").insert(result).then(function(){
+				const data = {
+					from: "Mind Maker Upper <me@samples.mailgun.org>",
+					to: receivedData.email,
+					subject: "Your new poll has been created",
+					text: `
+					You asked the question: ${receivedData.question} 
+					To edit/delete the page, visit the administrator link here: http://localhost:8080/polls/${uniqueURL}/admin 
+					You should send all the participants the following link so they can vote: http://localhost:8080/polls/${uniqueURL}/votes 
+					We hope you find an answer at long last!`
+				};
+				mailgun.messages().send(data, function (error, body) {
+					console.log("emailed");
+				});
+			}).then(function(response){
 				req.session.email = receivedData.email;
-				res.status(200).json({url: `/polls/${uniqueURL}/admin`});
+					res.status(200).json({url: `/polls/${uniqueURL}/admin`});
 			});
 		});
 	});
