@@ -132,7 +132,7 @@ module.exports = (knex) => {
           console.log(response);
           const data = {
             from: 'Excited User <me@samples.mailgun.org>',
-            to: response[0].creator_email;
+            to: response[0].creator_email,
             subject: 'Someone has voted on your poll',
             text: `A user has voted on your poll! Check it out at http://localhost/polls/${req.params.id}/votes.
               Use your email and name to log into admin access.`
