@@ -6,13 +6,14 @@
   </head>
   <header>
     <% include ./partials/_nav.ejs %>
-    <script type="text/javascript" src="/scripts/newFields.js"></script>
     <script type="text/javascript" src="/scripts/admin.js"></script>
   </header>
 
   <body>
     <div class="jumbotron" style="margin:5%; text-align: center; display:flex; flex-direction:column">
+
     <% if (!loggedIn) { %>
+
       <form class="form-signin" action="/polls/<%= responses[0].randomURL %>/login?_method=PUT" method="POST" style="margin-left: 35%; margin-right: 35%">
         <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
         <label for="inputEmail" class="sr-only">Email address</label>
@@ -26,103 +27,40 @@
 
       <h2>Poll Admin Page</h2>
       <p>Your question was: <strong><%= responses[0].text %></strong></p>
-
-      <div style="background-color: white; text-align: center; padding: 2rem; border-radius: 1rem">
-        <p>Participant Link: <a href="/polls/<%= responses[0].randomURL %>/votes">www.myawesomefakedomain.com/polls/<%= responses[0].randomURL %>/votes</a></p>
+    
+      <div style="background-color: white; text-align: center; border-radius: 1rem">
+        <p style="padding-top:1rem">Participant Link: <a href="/polls/<%= responses[0].randomURL %>/votes">www.myawesomefakedomain.com/polls/<%= responses[0].randomURL %>/votes</a></p>
         <p>Administration Link: <a href="/polls/<%= responses[0].randomURL %>/admin">www.myawesomefakedomain.com/polls/<%= responses[0].randomURL %>/admin</a></p>
       </div>
-      <form id="updatePoll" action="/polls/<%= responses[0].randomURL %>/update?_method=PUT" method="post"></form>
-      <div style="display:flex; padding: 5rem">
-        <div style="text-align: left">
-          <div class="form-group">
-            <label for="email">Creator email:</label>
-            <input form="updatePoll" type="email" class="form-control" id="email" value="<%= responses[0].creator_email %>" required>
-          </div>
-          <div class="form-group">
-            <label for="name">Your Name*:</label>
-            <input form="updatePoll" type="text" class="form-control" id="name" value="<%= responses[0].creator_name %>" required>
-          </div>
-          <div class="form-group">
-            <label for="end">When should this poll end?*</label>
-            <input form="updatePoll" type="date" class="form-control" id="end" value="<%= responses[0].date_created.toISOString().substring(0,10) %>" required>
-          </div>
-        </div>
-        <div style="text-align: left; margin-left: 10rem;flex-grow: 2">
-          <div style="flex-direction: column">
-            <div class="form-group">
-              <label for="question">What would you like to change the question to?*</label>
-              <input form="updatePoll" type="text" class="form-control" id="question" value="<%= responses[0].text %>"required>
-            </div>
-            <div id="responses" class="options form-group">
-              <label>Your selection of responses:</label><span> (You can also add optional descriptions)</span>
-              <% let count = 1 %>
-              <% responses.forEach((response) => { %>
-                <div class="option" style="display:flex; flex-direction:row;">
-                  <input form="updatePoll" type="text" class="form-group form-control" id="option<%= response.id %>" value="<%= response.response_text %>" style="margin-right:2rem" required>
-                  <input form="updatePoll" type="text" class="description form-group form-control" id="description<%= response.id %>" value="<%= response.description %>" style="margin-right:2rem">
-                  <span>
-                    <button class="btn btn-sm btn-danger deleteResponse" url="/polls/<%= responses[0].randomURL %>/<%= response.id %>" responseId="<%= response.id %>" randomURL="<%= responses[0].randomURL %>">Delete</button>
-                  </span>
-                </div>
-              <% }) %>
-            </div>
-          <div style="display: flex; justify-content: space-between">
-            <div>
-              <button type="button" id="newOption" class="btn btn-info">&#x002B; Add Row</button>
-              <button type="button" id="deleteOption" class="btn btn-info">- Delete Row</button>
-            </div>
-            <div>
-              <button type="submit" id="endPoll" form="newPoll" class="btn btn-primary btn-secondary">End Poll Now</button>
-              <form id="delete_poll" action="/polls/<%= responses[0].randomURL %>?_method=DELETE" method="post">
-                <button id="deletePoll" class="btn btn-primary btn-danger">Delete Poll</button>
-              </form>
-              <button type="submit" id="updatePoll" form="updatePoll" class="btn btn-primary">Update Poll</button>
-            </div>
-          </div>
-          <h2>Warning! If you update any of your poll's contents, all existing votes will be wiped.</h2>
-        </div>
-      </div>
 
-    <% } %>
+      <div style="padding-top:1rem">
+        <p>You created this poll on: <%= responses[0].date_created.toDateString() %></p>
+        <p>It will end on: <%= responses[0].end_date.toDateString() %></p>
+      </div>
+      
+        <p>The answers below are ordered by their current ranking, based on the votes of all participants in this poll.</p>  
+        <table class="table">
+          <tr>
+            <td>Current Ranking</td>
+            <td>Response Text</td>
+            <td>Response Description (if any) </td>
+          </tr>
+        <% let count = 1; %>    
+        <% responses.forEach(response => { %>
+          <tr>
+            <td><%= count %></td>
+            <td><%= response.response_text %></td>
+            <td>
+              <% if(response.description !== "") {%>
+              <%= responses[0].creator_name %> described this as: <%= response.description %>
+              <% } %>
+            </td>
+            <% count++; %>
+          </tr>
+        <% }) %>
+        </table>
+        <button id="deleteButton" class="btn btn-primary btn-danger" randomURL="<%= responses[0].randomURL %>"> Delete This Poll </button>
+    <% } %>  
     </div>
-    <div id="data" randomURL="<%= responses[0].randomURL %>" ></div>
-<<<<<<< HEAD
-
-    <div class="jumbotron" style="margin:5%; text-align: center; display:flex; flex-direction:column">
-        <h2>What do you prefer?</h2>
-        <p>Fields marked with an asterisk (*) are required.</p>
-        <form id="vote" style="display:flex; padding: 5rem">
-          <div style="text-align: left">
-            <div class="form-group">
-              <label for="name">Your Name*:</label>
-              <input type="text" class="form-control" id="name">
-            </div>
-            <div class="form-group">
-              <span>This poll will end on:</span><br>
-              <span><%= responses[0].end_date.toDateString() %></span>
-            </div>
-          </div>
-          <div style="text-align: left; margin-left: 10rem; flex-grow: 2; display: flex; flex-direction: column">
-            <p>On <%= responses[0].date_created.toDateString() %>, <%= responses[0].creator_name %> asked: "<strong><%= responses[0].text %></strong>"</p>
-            <span class="form-group">The answers below are ordered by their current ranking, based on the votes of all participants in this poll.
-              You can rank the answers below in order of your preference by moving them around and submit your vote!</span>
-            <ul id="sortable">
-            <% let count = 1; %>    
-            <% responses.forEach(response => { %>
-              <div class="sortableContainer" id="<%= response.id %>" style="margin-bottom: 1rem">
-                <span style="float: right;">Current Ranking: <%= count %></span><li class="ui-state-default"><%= response.response_text %></li>
-                <% if(response.description !== "") {%>
-                <span><%= responses[0].creator_name %> described this as: <%= response.description %></span>
-                <% } %>
-                <% count++; %>
-              </div>
-            <% }) %>
-            </ul>
-            <button class="btn btn-primary" style="align-self: flex-end" id="submitOrder" url="<%= responses[0].randomURL %>" type="submit" action="/polls/<%= responses[0].randomURL %>" method="put">Submit</button>
-          </div>
-        </form>
-      </div>
-=======
->>>>>>> 00a18b5818fc4f9b84221cd81d4a21ae71168f08
   </body>
 </html>
