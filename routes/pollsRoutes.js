@@ -184,6 +184,31 @@ module.exports = (knex) => {
 			});
 	});
 
+	// Updates a poll
+	router.put("/:id/update", (req, res) => {
+		knex
+			.select("*")
+			.from("poll")
+			.where("poll.randomURL", req.params.id)
+			.then((response) => {
+				if (req.session.email === response[0].creator_email) {
+					knex("response")
+						.where("poll_id", response[0].id)
+						.andWhere("id", req.params.response)
+						.update({
+							text: req.body.text
+						})
+						.then(function(){
+							console.log("attempting update");
+							res.redirect(`/polls/${req.params.id}/votes`);
+						});
+				} else {
+					let templateVars = {errorCode: 500, errorMessage: "Unauthorized"};
+					res.render("./error.ejs", templateVars);
+				}
+			});
+	});
+
 	// Endpoint for displaying the current votes status
 	router.get("/:id/votes", (req, res) => {
 		let templateVars = {};
@@ -216,67 +241,50 @@ module.exports = (knex) => {
 			});
 	});
 
-	// Searches for a poll based on randomURL and if owner, searches for specific
-	//  response using id, then deletes
+  // Endpoint for thank you page
+  router.get("/:id/thanks", (req, res) => {
+    let templateVars = {};
+    knex
+    .select("*")
+    .from("poll")
+    .where("poll.randomURL", req.params.id)
+    .then((result) => {
+      templateVars.creator_name = result[0].creator_name;
+      res.render("thank_you", templateVars);
+    });
+  });
+
+	// Searches for responses based on randomURL and if owner, checks if there are
+	//   at least 3 responses, then delete if true, and sends error if false
 	router.delete("/:id/:response", (req, res) => {
-		knex
-			.select("*")
-			.from("poll")
-			.where("poll.randomURL", req.params.id)
-			.then((response) => {
-				if (req.session.email === response[0].creator_email) {
-					knex("response")
-						.where("poll_id", response[0].id)
-						.andWhere("id", req.params.response)
-						.del()
-						.then(function(){
-							console.log("attempting delete");
-							res.redirect(`/polls/${req.params.id}/admin`);
-						});
-				} else {
-					let templateVars = {errorCode: 500, errorMessage: "Unauthorized"};
-					res.render("./error.ejs", templateVars);
-				}
-			});
-	});
-
-	// Update a single response: searches for poll using randomURL, then checks if
-	//  owner, and if true, searches for response using id, and update the text
-	router.put("/:id/:response", (req, res) => {
-		knex
-			.select("*")
-			.from("poll")
-			.where("poll.randomURL", req.params.id)
-			.then((response) => {
-				if (req.session.email === response[0].creator_email) {
-					knex("response")
-						.where("poll_id", response[0].id)
-						.andWhere("id", req.params.response)
-						.update({
-							text: req.body.text
-						})
-						.then(function(){
-							console.log("attempting update");
-							res.redirect(`/polls/${req.params.id}/votes`);
-						});
-				} else {
-					let templateVars = {errorCode: 500, errorMessage: "Unauthorized"};
-					res.render("./error.ejs", templateVars);
-				}
-			});
-	});
-
-	// Endpoint for thank you page
-	router.get("/:id/thanks", (req, res) => {
-		let templateVars = {};
-		knex
-			.select("*")
-			.from("poll")
-			.where("poll.randomURL", req.params.id)
-			.then((result) => {
-				templateVars.creator_name = result[0].creator_name;
-				res.render("thank_you", templateVars);
-			});
+    knex
+      .select("*")
+      .from("poll")
+      .where("poll.randomURL", req.params.id)
+      .then((response) => {
+        console.log(response[0].creator_email)
+        console.log(response[0].creator_email)
+        if (req.session.email === response[0].creator_email) {
+          knex("response")
+            .join("poll", "response.poll_id", "=", "poll.id")
+        		.where("poll.randomURL", req.params.id)
+            .count("*")
+      			.then((response) => {
+              if (response[0].count > 2) {
+      					knex("response")
+      						.where("id", req.body.id)
+      						.del()
+      						.then(function(){
+                    res.status(200).json({message:'response deleted'})
+      						});
+      				} else {
+                res.json({message:'need at least 2 options'})
+      				}
+    			  });
+        } else {
+          res.json({message:'unauthorized'})
+        }
+      });
 	});
 
 	return router;
