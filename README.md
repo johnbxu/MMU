@@ -6,10 +6,10 @@ This is a decision-maker for you & your friends! If you ever found yourself stru
 
 1. Clone this repository
 2. Setup an empty database in your
-2. Create the `.env` to include your db details
-2. Update the .env file with your correct local information
-3. Install dependencies: `npm i`
-5. Run migrations: `npm run knex migrate:latest`
+3. Create the `.env` to include your db details
+4. Update the .env file with your correct local information
+5. Install dependencies: `npm i`
+6. Run migrations: `npm run knex migrate:latest`
 7. Run the server: `npm run local`
 8. Visit `http://localhost:8080/`
 

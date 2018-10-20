@@ -1,29 +1,30 @@
 $(() => {
-  $("#submitOrder").click(function (event) {
+	$("#submitOrder").click(function (event) {
     event.preventDefault();
-    const order = [];
-    const voter = $("#name").val();
+    
+		const order = [];
 
-    const id = $("#submitOrder").attr("url");
-    Array.from($("#sortable")
-        .children(".sortableContainer"))
-      .forEach((child) => {
-        order.push(Number(child.id));
-      });
+		if ($("#name").val() == "") {
+      alert("You must provide a name");
+			return;
+		}
 
-    console.log("vote");
-    $.ajax({
-      url: `/polls/${id}`,
-      method: "PUT",
-      data: {
-        obj: order,
-        voterName: voter
-      },
-      dataType: "json",
-      success: function (response) {
-        console.log("Vote submitted. Received the following response: ", response);
-        window.location.href = `/polls/${id}/thanks`;
-      }
-    });
-  });
+		const id = $("#submitOrder").attr("url");
+		Array.from($("#sortable")
+			.children(".sortableContainer"))
+			.forEach((child) => {
+				order.push(Number(child.id));
+			});
+      
+		$.ajax({
+			url: `/polls/${id}`,
+			method: "PUT",
+			data: {
+				obj: order,
+				voterName: $("#name").val()
+			},
+			dataType: "json",
+			success: window.location.href = `/polls/${id}/thanks`
+		});
+	});
 });

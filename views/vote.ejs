@@ -27,7 +27,7 @@
         <div style="text-align: left">
           <div class="form-group">
             <label for="name">Your Name*:</label>
-            <input type="text" class="form-control" id="name" required>
+            <input type="text" class="form-control" id="name">
           </div>
           <div class="form-group">
             <span>This poll will end on:</span><br>
@@ -36,14 +36,17 @@
         </div>
         <div style="text-align: left; margin-left: 10rem; flex-grow: 2; display: flex; flex-direction: column">
           <p>On <%= responses[0].date_created.toDateString() %>, <%= responses[0].creator_name %> asked: "<strong><%= responses[0].text %></strong>"</p>
-          <span class="form-group">You can rank the answers below in order of preference by moving them around!</span>
+          <span class="form-group">The answers below are ordered by their current ranking, based on the votes of all participants in this poll.
+            You can rank the answers below in order of your preference by moving them around and submit your vote!</span>
           <ul id="sortable">
+          <% let count = 1; %>    
           <% responses.forEach(response => { %>
             <div class="sortableContainer" id="<%= response.id %>" style="margin-bottom: 1rem">
-              <li class="ui-state-default"><%= response.response_text %></li>
+              <span style="float: right;">Current Ranking: <%= count %></span><li class="ui-state-default"><%= response.response_text %></li>
               <% if(response.description !== "") {%>
               <span><%= responses[0].creator_name %> described this as: <%= response.description %></span>
               <% } %>
+              <% count++; %>
             </div>
           <% }) %>
           </ul>

@@ -35,7 +35,7 @@ module.exports = (knex) => {
 						.where("id", Number(id))
 						.update("borda", sum[id])
 						.then(function(){
-							console.log("borda computed");
+							console.log(`Borda value updated for response id: ${id}`);
 						});
 				}
 			});
@@ -52,7 +52,7 @@ module.exports = (knex) => {
 	router.post("/new", (req, res) => {
 		// creates an object that knex can insert
 		// the keys are the column names in the poll table
-    // res.clearCookie("session");
+		// res.clearCookie("session");
 
 		let receivedData = req.body;
 
@@ -74,7 +74,7 @@ module.exports = (knex) => {
 		knex.table("poll").insert(newPoll).returning("id").then(id => {
 			pollID = id[0];
 		}).then(function() {
-      req.session.email = receivedData.email;
+			req.session.email = receivedData.email;
 			// using the received pollid we can parse an array of objects
 			// which knex can insert into the response table
 			return receivedOptions.map(element => {
@@ -97,22 +97,22 @@ module.exports = (knex) => {
 					console.log("emailed");
 				});
 			}).then(function(response){
-					res.status(200).json({url: `/polls/${uniqueURL}/admin`});
+				res.status(200).json({url: `/polls/${uniqueURL}/admin`});
 			});
 		});
 	});
 
 	// This searches for and deletes a poll
 	router.delete("/:id", (req, res) => {
-    console.log('attempting delete');
+		console.log("attempting delete");
 		knex("poll")
 			.select("*").where("randomURL", req.params.id).then(function(response) {
 				if (req.session.email === response[0].creator_email) {
 					knex("response").where("poll_id", response[0].id).del().then(function(){
-            knex("poll").where("randomURL", req.params.id).del().then(function() {
-              console.log("poll deleted");
-              res.redirect("/")
-            })
+						knex("poll").where("randomURL", req.params.id).del().then(function() {
+							console.log("poll deleted");
+							res.redirect("/");
+						});
 					});
 				} else {
 					let templateVars = {errorCode: 500, errorMessage: "Unauthorized"};
@@ -132,14 +132,14 @@ module.exports = (knex) => {
 		for (let i = 0; i < options.length; i++) {
 			knex("vote").insert({"response_id": options[i], "bordaValue": options.length - i}).then(()=>{
 				console.log("inserting into vote table response_id", options[i], "bordaValue", options.length - i);
-			})
+			});
 		}
 		const insertBorda = new Promise(function(resolve, reject) {
 			for (let i = 0; i < options.length; i++) {
 				knex("response")
 					.where("id", options[i])
 					.update({ borda: options.length - i })
-					.then(() => { console.log("updated borda") });
+					.then(() => { console.log("updated borda"); });
 			}
 		});
 
@@ -192,10 +192,9 @@ module.exports = (knex) => {
 			.join("response", "poll.id", "=", "response.poll_id")
 			.select("*")
 			.where("poll.randomURL", req.params.id)
-			.orderBy("borda")
+			.orderBy("borda", "desc")
 			.then(function(table) {
 				templateVars.responses = table;
-				console.log("logging table",table);
 				res.render("../views/vote.ejs", templateVars);
 			});
 	});
