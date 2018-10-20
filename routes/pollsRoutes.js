@@ -52,7 +52,7 @@ module.exports = (knex) => {
 	router.post("/new", (req, res) => {
 		// creates an object that knex can insert
 		// the keys are the column names in the poll table
-    res.clearCookie("session");
+    // res.clearCookie("session");
 
 		let receivedData = req.body;
 
