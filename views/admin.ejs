@@ -61,7 +61,7 @@
                   <input form="updatePoll" type="text" class="form-group form-control" id="option<%= response.id %>" value="<%= response.response_text %>" style="margin-right:2rem" required>
                   <input form="updatePoll" type="text" class="description form-group form-control" id="description<%= response.id %>" value="<%= response.description %>" style="margin-right:2rem">
                   <span>
-                    <button class="btn btn-sm btn-danger deleteResponse" url="/polls/<%= responses[0].randomURL %>/<%= response.id %>" responseId="<%= response.id %>">Delete</button>
+                    <button class="btn btn-sm btn-danger deleteResponse" url="/polls/<%= responses[0].randomURL %>/<%= response.id %>" responseId="<%= response.id %>" randomURL="<%= responses[0].randomURL %>">Delete</button>
                   </span>
                 </div>
               <% }) %>

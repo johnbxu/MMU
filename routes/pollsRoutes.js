@@ -279,11 +279,11 @@ module.exports = (knex) => {
                     res.status(200).json({message:'response deleted'})
       						});
       				} else {
-                res.status(500).json({message:'need at least 2 options'})
+                res.json({message:'need at least 2 options'})
       				}
     			  });
         } else {
-          res.status(500).json({message:'unauthorized'})
+          res.json({message:'unauthorized'})
         }
       });
 	});

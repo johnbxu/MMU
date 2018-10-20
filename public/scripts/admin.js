@@ -4,6 +4,7 @@ $(() => {
     const responseId = {
       id: $(this).attr("responseId")
     }
+    const randomURL = $(this).attr("randomURL");
 
     $.ajax({
       url: endpoint,
@@ -11,6 +12,13 @@ $(() => {
       data: responseId
     }).done(function (response) {
       console.log(response);
+      if (response.message === "unauthorized") {
+        alert('invalid login');
+      } else if (response.message === "need at least 2 options") {
+        alert("Cannot delete. You must have at least 2 options.")
+      } else {
+        window.location.href = "http://localhost:8080/polls/" + randomURL + "/admin";
+      }
     })
   })
 
