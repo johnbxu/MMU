@@ -7,7 +7,7 @@
   <header>
     <% include ./partials/_nav.ejs %>
     <script type="text/javascript" src="/scripts/newFields.js"></script>
-    <script type="text/javascript" src="/scripts/updatePoll.js"></script>
+    <script type="text/javascript" src="/scripts/admin.js"></script>
   </header>
 
   <body>
@@ -31,36 +31,38 @@
         <p>Participant Link: <a href="/polls/<%= responses[0].randomURL %>/votes">www.myawesomefakedomain.com/polls/<%= responses[0].randomURL %>/votes</a></p>
         <p>Administration Link: <a href="/polls/<%= responses[0].randomURL %>/admin">www.myawesomefakedomain.com/polls/<%= responses[0].randomURL %>/admin</a></p>
       </div>
-      <form id="newPoll" action="/polls/new" method="post" style="display:flex; padding: 5rem">
-
+      <form id="updatePoll" action="/polls/<%= responses[0].randomURL %>/update?_method=PUT" method="post"></form>
+      <div style="display:flex; padding: 5rem">
         <div style="text-align: left">
           <div class="form-group">
             <label for="email">Creator email:</label>
-            <input type="email" class="form-control" id="email" value="<%= responses[0].creator_email %>" required>
+            <input form="updatePoll" type="email" class="form-control" id="email" value="<%= responses[0].creator_email %>" required>
           </div>
           <div class="form-group">
             <label for="name">Your Name*:</label>
-            <input type="text" class="form-control" id="name" value="<%= responses[0].creator_name %>" required>
+            <input form="updatePoll" type="text" class="form-control" id="name" value="<%= responses[0].creator_name %>" required>
           </div>
           <div class="form-group">
             <label for="end">When should this poll end?*</label>
-            <input type="date" class="form-control" id="end" value="<%= responses[0].date_created.toISOString().substring(0,10) %>" required>
+            <input form="updatePoll" type="date" class="form-control" id="end" value="<%= responses[0].date_created.toISOString().substring(0,10) %>" required>
           </div>
         </div>
         <div style="text-align: left; margin-left: 10rem;flex-grow: 2">
           <div style="flex-direction: column">
             <div class="form-group">
               <label for="question">What would you like to change the question to?*</label>
-              <input type="text" class="form-control" id="question" value="<%= responses[0].text %>"required>
+              <input form="updatePoll" type="text" class="form-control" id="question" value="<%= responses[0].text %>"required>
             </div>
             <div id="responses" class="options form-group">
               <label>Your selection of responses:</label><span> (You can also add optional descriptions)</span>
               <% let count = 1 %>
               <% responses.forEach((response) => { %>
                 <div class="option" style="display:flex; flex-direction:row;">
-                  <input type="text" class="form-group form-control" id="option<%= response.id %>" value="<%= response.response_text %>" style="margin-right:2rem" required>
-                  <input type="text" class="description form-group form-control" id="description<%= response.id %>" value="<%= response.description %>" style="margin-right:2rem">
-                  <span><button class="btn btn-sm btn-danger" action="/polls/<%= response.randomURL %>/<%= response.response_id %>" method="delete">Delete</button></span>
+                  <input form="updatePoll" type="text" class="form-group form-control" id="option<%= response.id %>" value="<%= response.response_text %>" style="margin-right:2rem" required>
+                  <input form="updatePoll" type="text" class="description form-group form-control" id="description<%= response.id %>" value="<%= response.description %>" style="margin-right:2rem">
+                  <span>
+                    <button class="btn btn-sm btn-danger deleteResponse" url="/polls/<%= responses[0].randomURL %>/<%= response.id %>" responseId="<%= response.id %>">Delete</button>
+                  </span>
                 </div>
               <% }) %>
             </div>
@@ -71,14 +73,16 @@
             </div>
             <div>
               <button type="submit" id="endPoll" form="newPoll" class="btn btn-primary btn-secondary">End Poll Now</button>
-              <button id="deletePoll" form="delete_poll" class="btn btn-primary btn-danger">Delete Poll</button>
-              <button type="submit" id="updatePoll" form="newPoll" class="btn btn-primary" action="/polls/new" method="POST">Update Poll</button>
+              <form id="delete_poll" action="/polls/<%= responses[0].randomURL %>?_method=DELETE" method="post">
+                <button id="deletePoll" class="btn btn-primary btn-danger">Delete Poll</button>
+              </form>
+              <button type="submit" id="updatePoll" form="updatePoll" class="btn btn-primary">Update Poll</button>
             </div>
 
           </div>
         </div>
-      </form>
-      <form id="delete_poll" action="/polls/<%= responses[0].randomURL %>?_method=DELETE" id="deletePoll" method="post"></form>
+      </div>
+
     <% } %>
     </div>
   </body>
