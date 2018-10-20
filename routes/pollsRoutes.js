@@ -52,6 +52,7 @@ module.exports = (knex) => {
 	router.post("/new", (req, res) => {
 		// creates an object that knex can insert
 		// the keys are the column names in the poll table
+    res.clearCookie("session");
 
 		let receivedData = req.body;
 
@@ -72,8 +73,8 @@ module.exports = (knex) => {
 		let pollID;
 		knex.table("poll").insert(newPoll).returning("id").then(id => {
 			pollID = id[0];
-			res.clearCookie("session");
 		}).then(function() {
+      req.session.email = receivedData.email;
 			// using the received pollid we can parse an array of objects
 			// which knex can insert into the response table
 			return receivedOptions.map(element => {
@@ -87,16 +88,15 @@ module.exports = (knex) => {
 					to: receivedData.email,
 					subject: "Your new poll has been created",
 					text: `
-					You asked the question: ${receivedData.question} 
-					To edit/delete the page, visit the administrator link here: http://localhost:8080/polls/${uniqueURL}/admin 
-					You should send all the participants the following link so they can vote: http://localhost:8080/polls/${uniqueURL}/votes 
+					You asked the question: ${receivedData.question}
+					To edit/delete the page, visit the administrator link here: http://localhost:8080/polls/${uniqueURL}/admin
+					You should send all the participants the following link so they can vote: http://localhost:8080/polls/${uniqueURL}/votes
 					We hope you find an answer at long last!`
 				};
 				mailgun.messages().send(data, function (error, body) {
 					console.log("emailed");
 				});
 			}).then(function(response){
-				req.session.email = receivedData.email;
 					res.status(200).json({url: `/polls/${uniqueURL}/admin`});
 			});
 		});
@@ -104,14 +104,15 @@ module.exports = (knex) => {
 
 	// This searches for and deletes a poll
 	router.delete("/:id", (req, res) => {
-
+    console.log('attempting delete');
 		knex("poll")
-			.select("*")
-			.where("randomURL", req.params.id)
-			.then(function(response) {
+			.select("*").where("randomURL", req.params.id).then(function(response) {
 				if (req.session.email === response[0].creator_email) {
-					knex("poll").where("randomURL", req.params.id).del().then(function(){
-						console.log("poll deleted");
+					knex("response").where("poll_id", response[0].id).del().then(function(){
+            knex("poll").where("randomURL", req.params.id).del().then(function() {
+              console.log("poll deleted");
+              res.redirect("/")
+            })
 					});
 				} else {
 					let templateVars = {errorCode: 500, errorMessage: "Unauthorized"};
@@ -201,8 +202,6 @@ module.exports = (knex) => {
 
 	// Submit email address to soft-login and assign cookie
 	router.put("/:id/login", (req, res) => {
-		res.clearCookie("session");
-		console.log(req.body.email);
 		knex
 			.select("*")
 			.from("poll")

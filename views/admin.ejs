@@ -57,10 +57,10 @@
               <label>Your selection of responses:</label><span> (You can also add optional descriptions)</span>
               <% let count = 1 %>
               <% responses.forEach((response) => { %>
-                <div class="option" style="display:flex; flex-direction:row">
+                <div class="option" style="display:flex; flex-direction:row;">
                   <input type="text" class="form-group form-control" id="option<%= response.id %>" value="<%= response.response_text %>" style="margin-right:2rem" required>
                   <input type="text" class="description form-group form-control" id="description<%= response.id %>" value="<%= response.description %>" style="margin-right:2rem">
-                  <span><button class="btn btn-sm btn-danger" action="/polls/<%= response.randomURL %>/<%= response.response_id %> method="delete">Delete</button></span>
+                  <span><button class="btn btn-sm btn-danger" action="/polls/<%= response.randomURL %>/<%= response.response_id %>" method="delete">Delete</button></span>
                 </div>
               <% }) %>
             </div>
@@ -71,13 +71,14 @@
             </div>
             <div>
               <button type="submit" id="endPoll" form="newPoll" class="btn btn-primary btn-secondary">End Poll Now</button>
-              <button type="submit" id="deletePoll" form="newPoll" class="btn btn-primary btn-danger">Delete Poll</button>
+              <button id="deletePoll" form="delete_poll" class="btn btn-primary btn-danger">Delete Poll</button>
               <button type="submit" id="updatePoll" form="newPoll" class="btn btn-primary" action="/polls/new" method="POST">Update Poll</button>
             </div>
-            
+
           </div>
         </div>
       </form>
+      <form id="delete_poll" action="/polls/<%= responses[0].randomURL %>?_method=DELETE" id="deletePoll" method="post"></form>
     <% } %>
     </div>
   </body>
