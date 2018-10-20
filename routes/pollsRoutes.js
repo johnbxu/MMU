@@ -16,6 +16,14 @@ function generateRandomString(numberOfChars) {
 }
 
 module.exports = (knex) => {
+  const checkIfExists = (id) => {
+    return knex('poll')
+      .select('*')
+      .where('randomURL', id)
+      .then((response) => {
+        return response.length > 0;
+      });
+  }
 	const computeBorda = (req) => {
 		const sum = {};
 		knex("poll")
@@ -167,35 +175,49 @@ module.exports = (knex) => {
 
 	router.get("/:id/admin", (req, res) => {
 		let templateVars = {};
-		knex("poll")
-			.join("response", "poll.id","=", "response.poll_id")
-			.select("*")
-			.where("poll.randomURL", req.params.id)
-			.orderBy("borda")
-			.then(function(table) {
-				templateVars.responses = table;
-				if (req.session.email === table[0].creator_email) {
-					templateVars.loggedIn = true;
-				} else {
-					templateVars.loggedIn = false;
-				}
-				res.render("../views/admin.ejs", templateVars);
-			});
+    checkIfExists(req.params.id).then((response) => {
+      if (response) {
+    		knex("poll")
+    			.join("response", "poll.id","=", "response.poll_id")
+    			.select("*")
+    			.where("poll.randomURL", req.params.id)
+    			.orderBy("borda")
+    			.then(function(table) {
+    				templateVars.responses = table;
+    				if (req.session.email === table[0].creator_email) {
+    					templateVars.loggedIn = true;
+    				} else {
+    					templateVars.loggedIn = false;
+    				}
+    				res.render("../views/admin.ejs", templateVars);
+    			});
+      } else {
+        templateVars = {errorCode: 404, errorMessage: "Cannot find poll"};
+        res.render("./error.ejs", templateVars);
+      }
+    });
 	});
 
 	// Endpoint for displaying the current votes status
 	router.get("/:id/votes", (req, res) => {
 		let templateVars = {};
+    checkIfExists(req.params.id).then((response) => {
+      if (response) {
+        knex("poll")
+        .join("response", "poll.id", "=", "response.poll_id")
+        .select("*")
+        .where("poll.randomURL", req.params.id)
+        .orderBy("borda", "desc")
+        .then(function(table) {
+          templateVars.responses = table;
+          res.render("../views/vote.ejs", templateVars);
+        });
+      } else {
+        templateVars = {errorCode: 404, errorMessage: "Cannot find poll"};
+        res.render("./error.ejs", templateVars);
+      }
+    });
 
-		knex("poll")
-			.join("response", "poll.id", "=", "response.poll_id")
-			.select("*")
-			.where("poll.randomURL", req.params.id)
-			.orderBy("borda", "desc")
-			.then(function(table) {
-				templateVars.responses = table;
-				res.render("../views/vote.ejs", templateVars);
-			});
 	});
 
 	// Submit email address to soft-login and assign cookie
@@ -215,18 +237,25 @@ module.exports = (knex) => {
 			});
 	});
 
-	// Endpoint for thank you page
-	router.get("/:id/thanks", (req, res) => {
-		let templateVars = {};
-		knex
-			.select("*")
-			.from("poll")
-			.where("poll.randomURL", req.params.id)
-			.then((result) => {
-				templateVars.creator_name = result[0].creator_name;
-				res.render("thank_you", templateVars);
-			});
-	});
+  // Endpoint for thank you page
+  router.get("/:id/thanks", (req, res) => {
+    let templateVars = {};
+    checkIfExists(req.params.id).then((response) => {
+      if (response) {
+        knex
+        .select("*")
+        .from("poll")
+        .where("poll.randomURL", req.params.id)
+        .then((result) => {
+          templateVars.creator_name = result[0].creator_name;
+          res.render("thank_you", templateVars);
+        });
+      } else {
+        templateVars = {errorCode: 404, errorMessage: "Cannot find poll"};
+        res.render("./error.ejs", templateVars);
+      }
+    });
+  });
 
 	return router;
 };
