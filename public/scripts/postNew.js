@@ -4,6 +4,13 @@ $(() => {
 		const formVariables = {};
 		formVariables["options"] = [];
 		let temporaryInputArray = [];
+		let today = new Date().toISOString();
+		let enteredDate = new Date($("#end").val()).toISOString();
+
+		if (enteredDate < today) {
+			alert("You can't select a past date");
+			return;
+		}
 
 		$("#responses .option :input").each(function(){
 			temporaryInputArray.push($(this).val());

@@ -241,50 +241,50 @@ module.exports = (knex) => {
 			});
 	});
 
-  // Endpoint for thank you page
-  router.get("/:id/thanks", (req, res) => {
-    let templateVars = {};
-    knex
-    .select("*")
-    .from("poll")
-    .where("poll.randomURL", req.params.id)
-    .then((result) => {
-      templateVars.creator_name = result[0].creator_name;
-      res.render("thank_you", templateVars);
-    });
-  });
+	// Endpoint for thank you page
+	router.get("/:id/thanks", (req, res) => {
+		let templateVars = {};
+		knex
+			.select("*")
+			.from("poll")
+			.where("poll.randomURL", req.params.id)
+			.then((result) => {
+				templateVars.creator_name = result[0].creator_name;
+				res.render("thank_you", templateVars);
+			});
+	});
 
 	// Searches for responses based on randomURL and if owner, checks if there are
 	//   at least 3 responses, then delete if true, and sends error if false
 	router.delete("/:id/:response", (req, res) => {
-    knex
-      .select("*")
-      .from("poll")
-      .where("poll.randomURL", req.params.id)
-      .then((response) => {
-        console.log(response[0].creator_email)
-        console.log(response[0].creator_email)
-        if (req.session.email === response[0].creator_email) {
-          knex("response")
-            .join("poll", "response.poll_id", "=", "poll.id")
-        		.where("poll.randomURL", req.params.id)
-            .count("*")
+		knex
+			.select("*")
+			.from("poll")
+			.where("poll.randomURL", req.params.id)
+			.then((response) => {
+				console.log(response[0].creator_email);
+				console.log(response[0].creator_email);
+				if (req.session.email === response[0].creator_email) {
+					knex("response")
+						.join("poll", "response.poll_id", "=", "poll.id")
+						.where("poll.randomURL", req.params.id)
+						.count("*")
       			.then((response) => {
-              if (response[0].count > 2) {
+							if (response[0].count > 2) {
       					knex("response")
       						.where("id", req.body.id)
       						.del()
       						.then(function(){
-                    res.status(200).json({message:'response deleted'})
+										res.status(200).json({message:"response deleted"});
       						});
       				} else {
-                res.json({message:'need at least 2 options'})
+								res.json({message:"need at least 2 options"});
       				}
     			  });
-        } else {
-          res.json({message:'unauthorized'})
-        }
-      });
+				} else {
+					res.json({message:"unauthorized"});
+				}
+			});
 	});
 
 	return router;
