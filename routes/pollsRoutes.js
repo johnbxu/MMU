@@ -5,8 +5,8 @@ const express = require("express");
 const router  = express.Router();
 
 // Mailgun
-const api_key = "15ee2e12e8149b90d5ef7787213e7e15-a3d67641-89656c39";
-const DOMAIN = "sandbox419377d991934b54ac091534aad574dd.mailgun.org";
+const api_key = process.env.MAILGUN_API;
+const DOMAIN = process.env.MAILGUN_DOMAIN;
 const mailgun = require("mailgun-js")({apiKey: api_key, domain: DOMAIN});
 
 // base 36 to include all 26 letters and 10 numbers
