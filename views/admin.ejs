@@ -13,12 +13,12 @@
   <body>
     <div class="jumbotron" style="margin:5%; text-align: center; display:flex; flex-direction:column">
     <% if (!loggedIn) { %>
-      <form class="form-signin" action="/polls/<%= responses[0].randomURL %>/login?_method=PUT" method="POST">
+      <form class="form-signin" action="/polls/<%= responses[0].randomURL %>/login?_method=PUT" method="POST" style="margin-left: 35%; margin-right: 35%">
         <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
         <label for="inputEmail" class="sr-only">Email address</label>
-        <input type="email" id="inputEmail" class="form-control" name="email" placeholder="Email address" required autofocus>
+        <input style="margin-bottom: 1rem" type="email" id="inputEmail" class="form-control" name="email" placeholder="Email address" required autofocus>
         <label for="inputName" class="sr-only">Name</label>
-        <input type="text" id="inputName" class="form-control" name="name" placeholder="Name" required>
+        <input style="margin-bottom: 1rem" type="text" id="inputName" class="form-control" name="name" placeholder="Name" required>
         <button class="btn btn-lg btn-primary btn-block" type="submit" id="signIn">Sign in</button>
       </form>
 
