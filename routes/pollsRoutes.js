@@ -131,7 +131,7 @@ module.exports = (knex) => {
 		// we save the vote
 		for (let i = 0; i < options.length; i++) {
 			knex("vote").insert({"response_id": options[i], "bordaValue": options.length - i}).then(()=>{
-				console.log("inserting into vote table response_id", options[i], "bordaValue", options.length);
+				console.log("inserting into vote table response_id", options[i], "bordaValue", options.length - i);
 			})
 		}
 		const insertBorda = new Promise(function(resolve, reject) {
