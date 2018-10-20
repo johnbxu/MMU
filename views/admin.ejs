@@ -78,12 +78,13 @@
               </form>
               <button type="submit" id="updatePoll" form="updatePoll" class="btn btn-primary">Update Poll</button>
             </div>
-
           </div>
+          <h2>Warning! If you update any of your poll's contents, all existing votes will be wiped.</h2>
         </div>
       </div>
 
     <% } %>
     </div>
+    <div id="data" randomURL="<%= responses[0].randomURL %>" ></div>
   </body>
 </html>
