@@ -6,7 +6,6 @@
   </head>
   <header>
     <% include ./partials/_nav.ejs %>
-    <script type="text/javascript" src="/scripts/admin.js"></script>
   </header>
 
   <body>
@@ -59,7 +58,9 @@
           </tr>
         <% }) %>
         </table>
-        <button id="deleteButton" class="btn btn-primary btn-danger" randomURL="<%= responses[0].randomURL %>"> Delete This Poll </button>
+        <form id="delete_poll" action="/polls/<%= responses[0].randomURL %>?_method=DELETE" method="post">
+          <button id="deletePoll" class="btn btn-primary btn-danger">Delete Poll</button>
+        </form>
     <% } %>  
     </div>
   </body>
