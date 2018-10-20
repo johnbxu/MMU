@@ -185,27 +185,38 @@ module.exports = (knex) => {
 	});
 
 	// Updates a poll
-	router.put("/:id/update", (req, res) => {
-		knex
-			.select("*")
-			.from("poll")
+	router.post("/:id/update", (req, res) => {
+		knex("response")
+      .join("poll", "poll.id", "=", "response.poll_id")
+      .select("response.id")
 			.where("poll.randomURL", req.params.id)
 			.then((response) => {
+        console.log(response);
 				if (req.session.email === response[0].creator_email) {
-					knex("response")
-						.where("poll_id", response[0].id)
-						.andWhere("id", req.params.response)
-						.update({
-							text: req.body.text
-						})
-						.then(function(){
-							console.log("attempting update");
-							res.redirect(`/polls/${req.params.id}/votes`);
-						});
-				} else {
-					let templateVars = {errorCode: 500, errorMessage: "Unauthorized"};
-					res.render("./error.ejs", templateVars);
-				}
+          Promise.all([
+            response.map(vote => {
+              return knex("vote")
+                .where("response_id", vote.id)
+                .del();
+            })
+          ]).then(function () {
+            console.log('Deleted');
+          });
+        }
+				// 	knex("response")
+				// 		.where("poll_id", response[0].id)
+				// 		.andWhere("id", req.params.response)
+				// 		.update({
+				// 			text: req.body.text
+				// 		})
+				// 		.then(function(){
+				// 			console.log("attempting update");
+				// 			res.redirect(`/polls/${req.params.id}/votes`);
+				// 		});
+				// } else {
+				// 	let templateVars = {errorCode: 500, errorMessage: "Unauthorized"};
+				// 	res.render("./error.ejs", templateVars);
+				// }
 			});
 	});
 
