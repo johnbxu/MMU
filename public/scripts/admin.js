@@ -1,28 +1,28 @@
 $(() => {
-  const randomURL = $("#data").attr("randomURL");
-  $(".deleteResponse").click(function (event) {
-    const endpoint = $(this).attr("url");
-    const responseId = {
-      id: $(this).attr("responseId")
-    }
+	const randomURL = $("#data").attr("randomURL");
+	$(".deleteResponse").click(function (event) {
+		const endpoint = $(this).attr("url");
+		const responseId = {
+			id: $(this).attr("responseId")
+		};
 
-    $.ajax({
-      url: endpoint,
-      method: "DELETE",
-      data: responseId
-    }).done(function (response) {
-      console.log(response);
-      if (response.message === "unauthorized") {
-        alert('invalid login');
-      } else if (response.message === "need at least 2 options") {
-        alert("Cannot delete. You must have at least 2 options.")
-      } else {
-        window.location.href = "http://localhost:8080/polls/" + randomURL + "/admin";
-      }
-    })
-  })
+		$.ajax({
+			url: endpoint,
+			method: "DELETE",
+			data: responseId
+		}).done(function (response) {
+			console.log(response);
+			if (response.message === "unauthorized") {
+				alert("invalid login");
+			} else if (response.message === "need at least 2 options") {
+				alert("Cannot delete. You must have at least 2 options.");
+			} else {
+				window.location.href = "http://localhost:8080/polls/" + randomURL + "/admin";
+			}
+		});
+	});
 
-  $("#updatePoll").submit(function (event) {
+	$("#updatePoll").submit(function (event) {
 		event.preventDefault();
 		const formVariables = {};
 		formVariables["options"] = [];

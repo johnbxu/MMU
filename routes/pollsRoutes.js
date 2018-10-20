@@ -48,7 +48,6 @@ module.exports = (knex) => {
 
 	// Endpoint for creating a poll. Redir to polls/:id/votes if success
 	// where :id is a randomly generated 8 char long string
-
 	router.post("/new", (req, res) => {
 		// creates an object that knex can insert
 		// the keys are the column names in the poll table
@@ -184,42 +183,6 @@ module.exports = (knex) => {
 			});
 	});
 
-	// Updates a poll
-	router.post("/:id/update", (req, res) => {
-		knex("response")
-      .join("poll", "poll.id", "=", "response.poll_id")
-      .select("response.id")
-			.where("poll.randomURL", req.params.id)
-			.then((response) => {
-        console.log(response);
-				if (req.session.email === response[0].creator_email) {
-          Promise.all([
-            response.map(vote => {
-              return knex("vote")
-                .where("response_id", vote.id)
-                .del();
-            })
-          ]).then(function () {
-            console.log('Deleted');
-          });
-        }
-				// 	knex("response")
-				// 		.where("poll_id", response[0].id)
-				// 		.andWhere("id", req.params.response)
-				// 		.update({
-				// 			text: req.body.text
-				// 		})
-				// 		.then(function(){
-				// 			console.log("attempting update");
-				// 			res.redirect(`/polls/${req.params.id}/votes`);
-				// 		});
-				// } else {
-				// 	let templateVars = {errorCode: 500, errorMessage: "Unauthorized"};
-				// 	res.render("./error.ejs", templateVars);
-				// }
-			});
-	});
-
 	// Endpoint for displaying the current votes status
 	router.get("/:id/votes", (req, res) => {
 		let templateVars = {};
@@ -273,8 +236,6 @@ module.exports = (knex) => {
 			.from("poll")
 			.where("poll.randomURL", req.params.id)
 			.then((response) => {
-				console.log(response[0].creator_email);
-				console.log(response[0].creator_email);
 				if (req.session.email === response[0].creator_email) {
 					knex("response")
 						.join("poll", "response.poll_id", "=", "poll.id")
@@ -287,7 +248,7 @@ module.exports = (knex) => {
       						.del()
       						.then(function(){
 										res.status(200).json({message:"response deleted"});
-      						});
+									});
       				} else {
 								res.json({message:"need at least 2 options"});
       				}
