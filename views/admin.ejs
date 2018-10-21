@@ -4,6 +4,12 @@
     <title>Poll Admin</title>
     <% include ./partials/_head.ejs %>
     <style>
+      .table-labels {
+        font-weight: bold;
+      }
+      .table {
+        margin-top: 2rem;
+      }
       @media all and (max-width: 500px) {
         body {
           width: 500px;
@@ -40,13 +46,13 @@
       </div>
 
       <div style="padding-top:1rem">
-        <p>You created this poll on: <%= responses[0].date_created.toDateString() %></p>
-        <p>It will end on: <%= responses[0].end_date.toDateString() %></p>
+        <p>You created this poll on: <b><%= responses[0].date_created.toDateString() %></b></p>
+        <p>It will end on: <b><%= responses[0].end_date.toDateString() %></b></p>
       </div>
 
         <p>The answers below are ordered by their current ranking, based on the votes of all participants in this poll.</p>
         <table class="table">
-          <tr>
+          <tr class="table-labels">
             <td>Current Ranking</td>
             <td>Response Text</td>
             <td>Response Description (if any) </td>
