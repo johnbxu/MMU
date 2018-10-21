@@ -7,6 +7,32 @@
     <script type="text/javascript" src="/scripts/vote.js"></script>
     <style>
       #sortable { list-style-type: none; padding-left: 0;}
+      #vote {
+        padding: 5rem;
+      }
+      .options {
+        margin-left: 5rem;
+      }
+      .form-control {
+        width: 10rem;
+      }
+      li {
+        padding: 1rem;
+      }
+      @media all and (max-width: 500px) {
+        body {
+          width: 500px;
+        }
+      }
+      @media all and (max-width: 800px) {
+        #vote {
+          flex-direction: column;
+          padding: 2rem;
+        }
+        .options {
+          margin-left: 2rem;
+        }
+      }
     </style>
     <script>
       $( function() {
@@ -23,7 +49,7 @@
     <div class="jumbotron" style="margin:5%; text-align: center; display:flex; flex-direction:column">
       <h2>What do you prefer?</h2>
       <p>Fields marked with an asterisk (*) are required.</p>
-      <form id="vote" style="display:flex; padding: 5rem">
+      <form id="vote" style="display:flex;">
         <div style="text-align: left">
           <div class="form-group">
             <label for="name">Your Name*:</label>
@@ -34,15 +60,15 @@
             <span><%= responses[0].end_date.toDateString() %></span>
           </div>
         </div>
-        <div style="text-align: left; margin-left: 10rem; flex-grow: 2; display: flex; flex-direction: column">
+        <div class="options" style="text-align: left; flex-grow: 2; display: flex; flex-direction: column">
           <p>On <%= responses[0].date_created.toDateString() %>, <%= responses[0].creator_name %> asked: "<strong><%= responses[0].text %></strong>"</p>
           <span class="form-group">The answers below are ordered by their current ranking, based on the votes of all participants in this poll.
             You can rank the answers below in order of your preference by moving them around and submit your vote!</span>
           <ul id="sortable">
-          <% let count = 1; %>    
+          <% let count = 1; %>
           <% responses.forEach(response => { %>
             <div class="sortableContainer" id="<%= response.id %>" style="margin-bottom: 1rem">
-              <span style="float: right;">Current Ranking: <%= count %></span><li class="ui-state-default"><%= response.response_text %></li>
+              <li class="ui-state-default"><%= response.response_text %><span style="float: right;">Current Ranking: <%= count %></span></li>
               <% if(response.description !== "") {%>
               <span><%= responses[0].creator_name %> described this as: <%= response.description %></span>
               <% } %>

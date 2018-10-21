@@ -5,6 +5,28 @@
     <% include ./partials/_head.ejs %>
     <script type="text/javascript" src="/scripts/newFields.js"></script>
     <script type="text/javascript" src="/scripts/postNew.js"></script>
+    <style>
+      #newPoll {
+        padding: 5rem;
+      }
+      .question {
+         margin-left: 10rem
+      }
+      @media all and (max-width: 800px) {
+        #newPoll {
+          flex-direction: column;
+          padding: 1rem;
+        }
+        .question {
+          margin-left: 2rem;
+        }
+      }
+      @media all and (max-width: 500px) {
+        body {
+          width: 500px;
+        }
+      }
+    </style>
   </head>
   <header>
     <% include ./partials/_nav.ejs %>
@@ -13,10 +35,10 @@
   <body>
     <div class="jumbotron" style="margin:5%; text-align: center; display:flex; flex-direction:column">
       <h2>New Poll</h2>
-      <p>Please provide a question and at least 2 answers. 
+      <p>Please provide a question and at least 2 answers.
         Fields marked with an asterisk (*) are required to create a poll.</p>
-      <form id="newPoll" action="/polls/new" method="post" style="display:flex; padding: 5rem">
-        
+      <form id="newPoll" action="/polls/new" method="post" style="display:flex;">
+
         <div style="text-align: left">
           <div class="form-group">
             <label for="email">Email*:</label>
@@ -31,7 +53,7 @@
             <input type="date" class="form-control" id="end" required>
           </div>
         </div>
-        <div style="text-align: left; margin-left: 10rem;flex-grow: 2"">
+        <div class="question" style="text-align: left;flex-grow: 2">
           <div style="flex-direction: column">
             <div class="form-group">
               <label for="question">What is the question you want to ask?*</label>
