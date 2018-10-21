@@ -26,7 +26,7 @@
 
       <h2>Poll Admin Page</h2>
       <p>Your question was: <strong><%= responses[0].text %></strong></p>
-    
+
       <div style="background-color: white; text-align: center; border-radius: 1rem">
         <p style="padding-top:1rem">Participant Link: <a href="/polls/<%= responses[0].randomURL %>/votes">www.myawesomefakedomain.com/polls/<%= responses[0].randomURL %>/votes</a></p>
         <p>Administration Link: <a href="/polls/<%= responses[0].randomURL %>/admin">www.myawesomefakedomain.com/polls/<%= responses[0].randomURL %>/admin</a></p>
@@ -36,15 +36,15 @@
         <p>You created this poll on: <%= responses[0].date_created.toDateString() %></p>
         <p>It will end on: <%= responses[0].end_date.toDateString() %></p>
       </div>
-      
-        <p>The answers below are ordered by their current ranking, based on the votes of all participants in this poll.</p>  
+
+        <p>The answers below are ordered by their current ranking, based on the votes of all participants in this poll.</p>
         <table class="table">
           <tr>
             <td>Current Ranking</td>
             <td>Response Text</td>
             <td>Response Description (if any) </td>
           </tr>
-        <% let count = 1; %>    
+        <% let count = 1; %>
         <% responses.forEach(response => { %>
           <tr>
             <td><%= count %></td>
@@ -61,7 +61,7 @@
         <form id="delete_poll" action="/polls/<%= responses[0].randomURL %>?_method=DELETE" method="post">
           <button id="deletePoll" class="btn btn-primary btn-danger">Delete Poll</button>
         </form>
-    <% } %>  
+    <% } %>
     </div>
   </body>
 </html>

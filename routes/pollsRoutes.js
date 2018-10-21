@@ -113,19 +113,44 @@ module.exports = (knex) => {
 	router.delete("/:id", (req, res) => {
 		console.log("attempting delete");
 		knex("poll")
+      .join("response", "poll.id", "=", "response.poll_id")
 			.select("*").where("randomURL", req.params.id).then(function(response) {
 				if (req.session.email === response[0].creator_email) {
-					knex("response").where("poll_id", response[0].id).del().then(function(){
-						knex("poll").where("randomURL", req.params.id).del().then(function() {
-							console.log("poll deleted");
-							res.redirect("/");
-						});
-					});
-				} else {
-					let templateVars = {errorCode: 500, errorMessage: "Unauthorized"};
-					res.render("./error.ejs", templateVars);
-				}
-			});
+          Promise.all(response.map((ele) => {
+            return knex('vote')
+              .where('response_id', ele.id)
+              .del()
+              .then(() => {
+              })
+          })).then(() => {
+            knex("response")
+              .where("poll_id", response[0].poll_id)
+              .del()
+              .then(() => {
+                knex("poll")
+                  .where("randomURL", req.params.id)
+                  .del()
+                  .then(() => {
+                    console.log("poll deleted");
+                    res.status(200).redirect('/');
+                  });
+              })
+          });
+        }
+      });
+
+
+				// 	knex("response").where("poll_id", response[0].id).del().then(function(){
+				// 		knex("poll").where("randomURL", req.params.id).del().then(function() {
+				// 			console.log("poll deleted");
+				// 			res.redirect("/");
+				// 		});
+				// 	});
+				// } else {
+				// 	let templateVars = {errorCode: 500, errorMessage: "Unauthorized"};
+				// 	res.render("./error.ejs", templateVars);
+				// }
+			  // });
 	});
 
 	// Endpoint for submitting the vote. Redir to /polls/:id/votes on success
