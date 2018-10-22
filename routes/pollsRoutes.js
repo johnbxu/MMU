@@ -131,7 +131,16 @@ module.exports = (knex) => {
                   .where("randomURL", req.params.id)
                   .del()
                   .then(() => {
-                    console.log("poll deleted");
+										console.log("poll deleted");
+										const data = {
+											from: "Mind Maker Upper <me@samples.mailgun.org>",
+											to: response[0].creator_email,
+											subject: "Your poll has been deleted",
+											text: "Your poll was deleted."
+										};
+										mailgun.messages().send(data, function (error, body) {
+											console.log("emailed");
+										});
                     res.status(200).redirect('/');
                   });
               })
