@@ -2,6 +2,12 @@
 
 This is a decision-maker for you & your friends! If you ever found yourself struggling to make a decision as a group, use this service. People respond to your polls using a preferential voting system based on the Borda count.
 
+## Screenshots
+
+![screenshot of the home page](https://github.com/johnbxu/MMU/blob/dev/docs/Home%20Page.png)
+![screenshot of creating a poll](https://github.com/johnbxu/MMU/blob/dev/docs/New%20Poll.png)
+![screenshot of voting on a poll](https://github.com/johnbxu/MMU/blob/dev/docs/Votes%20Page.png)
+
 ## Getting Started
 
 1. Clone this repository
